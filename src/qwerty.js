@@ -91,4 +91,4 @@ const getColorFromDistance = (distance) => {
   }
   return HSVtoRGB(0.01, 1, (distance / maxDistance) * 2);
 };
-export { getDistance, getColorFromDistance, init };
+export { getDistance, getColorFromDistance, HSVtoRGB, init };
