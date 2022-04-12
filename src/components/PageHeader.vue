@@ -1,5 +1,5 @@
 <template>
-    <div class="header">
+    <header class="header">
         <div class="htp-icon" @click="$emit('how-to-play')">?</div>
         <div><h2>QWERTLE</h2></div>
         <div @click="$emit('statistics')">
@@ -15,7 +15,7 @@
                 ></path>
             </svg>
         </div>
-    </div>
+    </header>
 </template>
 
 <script>
@@ -24,13 +24,10 @@ export default {};
 
 <style>
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    padding: 0 20px;
     height: 50px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     color: white;
     border-bottom: 1px #3a3a3c solid;

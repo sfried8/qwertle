@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="app-container">
         <PageHeader
             @how-to-play="showingHowToPlay = true"
             @statistics="showingStatistics = true"
@@ -61,6 +61,8 @@ export default {
 <style>
 body {
     background-color: #121213;
+    width: calc(100vw - 16px);
+    height: calc(100vh - 16px);
 }
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -68,6 +70,12 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+.app-container {
+    width: 100%;
+    height: 100%;
 }
 </style>

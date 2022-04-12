@@ -1,71 +1,73 @@
 <template>
     <div class="game-container">
-        <div
-            class="guess-container"
-            v-for="previousGuess in guesses"
-            :key="JSON.stringify(previousGuess)"
-        >
+        <div class="game-board">
             <div
-                class="previous-guess-letter"
-                v-for="(letter, i) in previousGuess"
-                :style="{
-                    'background-color': getColorFromDistance(letter.distance),
-                }"
-                :key="letter.letter + i"
-                @mouseenter="hoveringGuessLetter = letter.letter"
+                class="guess-container"
+                v-for="previousGuess in guesses"
+                :key="JSON.stringify(previousGuess)"
             >
-                {{ letter.letter }}
-            </div>
-        </div>
-
-        <div>
-            <div class="guess-container">
-                <div class="previous-guess-letter" :style="{}">
-                    {{ letter0 }}
-                </div>
-                <div class="previous-guess-letter" :style="{}">
-                    {{ letter1 }}
-                </div>
-                <div class="previous-guess-letter" :style="{}">
-                    {{ letter2 }}
-                </div>
-                <div class="previous-guess-letter" :style="{}">
-                    {{ letter3 }}
-                </div>
-                <div class="previous-guess-letter" :style="{}">
-                    {{ letter4 }}
+                <div
+                    class="previous-guess-letter"
+                    v-for="(letter, i) in previousGuess"
+                    :style="{
+                        'background-color': getColorFromDistance(
+                            letter.distance
+                        ),
+                    }"
+                    :key="letter.letter + i"
+                    @mouseenter="hoveringGuessLetter = letter.letter"
+                >
+                    {{ letter.letter }}
                 </div>
             </div>
-        </div>
 
-        <div
-            class="guess-container"
-            v-for="remainingGuess in 5 - guesses.length"
-            :key="'placeholder' + remainingGuess"
-        >
+            <div>
+                <div class="guess-container">
+                    <div class="previous-guess-letter" :style="{}">
+                        {{ letter0 }}
+                    </div>
+                    <div class="previous-guess-letter" :style="{}">
+                        {{ letter1 }}
+                    </div>
+                    <div class="previous-guess-letter" :style="{}">
+                        {{ letter2 }}
+                    </div>
+                    <div class="previous-guess-letter" :style="{}">
+                        {{ letter3 }}
+                    </div>
+                    <div class="previous-guess-letter" :style="{}">
+                        {{ letter4 }}
+                    </div>
+                </div>
+            </div>
+
             <div
-                class="previous-guess-letter"
-                v-for="letter in 5"
-                :style="{}"
-                :key="'placeholder-letter' + letter"
-            ></div>
+                class="guess-container"
+                v-for="remainingGuess in 5 - guesses.length"
+                :key="'placeholder' + remainingGuess"
+            >
+                <div
+                    class="previous-guess-letter"
+                    v-for="letter in 5"
+                    :style="{}"
+                    :key="'placeholder-letter' + letter"
+                ></div>
+            </div>
         </div>
-        <div>
-            <QwertleKeyboard
-                :highlight="answer.charAt(currentIndex)"
-                :letters-to-show="currentLettersToShow"
-                v-if="victory === null"
-                @letter-typed="keyPress"
-            />
-            <h2 v-else-if="victory">
-                YOU WIN!
-                <button @click="resetGame()">Play Again</button>
-            </h2>
-            <h2 v-else>
-                YOU LOSE! The word was "{{ answer }}"
-                <button @click="resetGame()">Play Again</button>
-            </h2>
-        </div>
+        <QwertleKeyboard
+            :highlight="answer.charAt(currentIndex)"
+            :letters-to-show="currentLettersToShow"
+            v-if="victory === null"
+            @letter-typed="keyPress"
+        />
+        <h2 v-else-if="victory">
+            YOU WIN!
+            <button @click="resetGame()">Play Again</button>
+        </h2>
+        <h2 v-else>
+            YOU LOSE! The word was "{{ answer }}"
+            <button @click="resetGame()">Play Again</button>
+        </h2>
     </div>
 </template>
 <script>
@@ -196,7 +198,9 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    margin-top: 21vw;
+    margin-top: 4px;
+    width: 100%;
+    height: calc(100% - 50px);
 }
 .guess-container {
     display: flex;
@@ -205,8 +209,8 @@ export default {
     color: white;
 }
 .previous-guess-letter {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;

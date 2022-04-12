@@ -2,12 +2,12 @@
     <div class="keyboard-container">
         <div
             class="keyboard-row"
-            :style="{ 'margin-left': 3 * (i % 2) + 'vw' }"
             v-for="(row, i) in rows"
             :key="'row' + row[0]"
         >
+            <div class="keyboard-margin" v-if="i === 1"></div>
             <div
-                class="keyboard-key"
+                :class="['keyboard-key', { 'keyboard-key-long': l.length > 1 }]"
                 v-for="l in row"
                 :key="'letter' + l"
                 :id="'key-' + l"
@@ -18,12 +18,12 @@
                         lettersToShow.indexOf(l) >= 0
                             ? getColorFromDistance(hoveringLetter, l)
                             : '#818384',
-                    width: l.length === 1 ? '8vw' : '12.5vw',
                 }"
                 @click="$emit('letter-typed', l)"
             >
                 {{ l === "Backspace" ? "⌫" : l }}
             </div>
+            <div class="keyboard-margin" v-if="i === 1"></div>
         </div>
     </div>
 </template>
@@ -66,11 +66,11 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    position: fixed;
-    bottom: 3vw;
-    left: 5vw;
+    width: 100%;
+    max-width: 500px;
 }
 .keyboard-row {
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -78,14 +78,20 @@ export default {
 }
 .keyboard-key {
     border-radius: 5px;
-    width: 8vw;
-    height: 50px;
+    height: 60px;
     color: white;
     font-weight: bold;
     background-color: #818384;
     display: flex;
     justify-content: center;
+    flex: 1;
     align-items: center;
-    margin: 0.5vw;
+    margin: 2px;
+}
+.keyboard-key-long {
+    flex: 1.5;
+}
+.keyboard-margin {
+    flex: 0.5;
 }
 </style>
