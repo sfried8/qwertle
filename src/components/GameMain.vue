@@ -230,9 +230,11 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    margin-top: 4px;
+    margin: 4px;
     width: 100%;
-    height: calc(100vh - 75px);
+}
+.game-board {
+    margin: 8px 0;
 }
 .guess-container {
     display: flex;
