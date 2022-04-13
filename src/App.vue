@@ -50,7 +50,7 @@ export default {
 body {
     background-color: #121213;
     width: calc(100vw - 16px);
-    height: calc(100vh - 16px);
+    height: 100%;
 }
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;

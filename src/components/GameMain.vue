@@ -232,13 +232,14 @@ export default {
     align-items: center;
     margin-top: 4px;
     width: 100%;
-    height: calc(100% - 50px);
+    height: calc(100vh - 75px);
 }
 .guess-container {
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
+    flex-grow: 2;
 }
 .previous-guess-letter {
     width: 40px;
