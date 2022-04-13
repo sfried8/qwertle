@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-            <div>
+            <div v-if="guesses.length < 6">
                 <div class="guess-container">
                     <div class="previous-guess-letter" :style="{}">
                         {{ letter0 }}
@@ -43,7 +43,7 @@
 
             <div
                 class="guess-container"
-                v-for="remainingGuess in 5 - guesses.length"
+                v-for="remainingGuess in Math.max(0, 5 - guesses.length)"
                 :key="'placeholder' + remainingGuess"
             >
                 <div
@@ -57,10 +57,10 @@
         <QwertleKeyboard
             :highlight="answer.charAt(currentIndex)"
             :letters-to-show="currentLettersToShow"
-            v-if="victory === null"
+            v-if="gameState === 'IN_PROGRESS'"
             @letter-typed="keyPress"
         />
-        <h2 v-else-if="victory">
+        <h2 v-else-if="gameState === 'WIN'">
             YOU WIN!
             <button @click="resetGame()">Play Again</button>
         </h2>
@@ -74,19 +74,42 @@
 import { getDistance, getColorFromDistance } from "../qwerty.js";
 import QwertleKeyboard from "./QwertleKeyboard";
 import { ACCEPTABLE, ANSWERS } from "../dictionary.js";
+import { getItem, setItem } from "../SaveDataManager";
+import { saveToStats } from "../stats";
 
 export default {
     components: { QwertleKeyboard },
+    watch: {
+        answer(val) {
+            setItem("answer", val);
+        },
+        gameState(val) {
+            setItem("gameState", val);
+        },
+        guesses: {
+            deep: true,
+            handler(val) {
+                setItem("guesses", val);
+            },
+        },
+    },
     mounted() {
-        const answerArray = Object.keys(ANSWERS);
+        // const answerArray = Object.keys(ANSWERS);
 
-        this.answer =
-            answerArray[
-                Math.floor(Math.random() * answerArray.length)
-            ].toUpperCase();
+        // this.answer =
+        //     answerArray[
+        //         Math.floor(Math.random() * answerArray.length)
+        //     ].toUpperCase();
         window.addEventListener("keydown", (e) => {
             this.keyPress(e.key);
         });
+        this.gameState = getItem("gameState");
+        this.answer = getItem("answer");
+        this.guesses = getItem("guesses");
+
+        if (!this.answer) {
+            this.resetGame();
+        }
     },
     data() {
         return {
@@ -99,6 +122,7 @@ export default {
             letter2: "",
             letter3: "",
             letter4: "",
+            gameState: "IN_PROGRESS",
         };
     },
     computed: {
@@ -111,27 +135,33 @@ export default {
                 this.letter4
             );
         },
-        victory() {
+
+        currentLettersToShow() {
+            return this.guesses.map((g) => g[this.currentIndex]?.letter);
+        },
+    },
+    methods: {
+        checkVictory() {
             if (!this.guesses.length) {
-                return null;
+                this.gameState = "IN_PROGRESS";
+                return;
             }
             if (
                 this.guesses[this.guesses.length - 1].every(
                     (g) => g.distance === 0
                 )
             ) {
-                return true;
+                this.gameState = "WIN";
+                this.endGame();
+            } else if (this.guesses.length === 6) {
+                this.gameState = "LOSE";
+                this.endGame();
             }
-            if (this.guesses.length === 6) {
-                return false;
-            }
-            return null;
         },
-        currentLettersToShow() {
-            return this.guesses.map((g) => g[this.currentIndex]?.letter);
+        endGame() {
+            saveToStats(this.guesses.length, this.gameState === "WIN");
+            this.$emit("statistics");
         },
-    },
-    methods: {
         keyPress(key) {
             if (key === "Backspace" && this.currentIndex > 0) {
                 this.currentIndex -= 1;
@@ -164,6 +194,7 @@ export default {
                 answerArray[
                     Math.floor(Math.random() * answerArray.length)
                 ].toUpperCase();
+            this.gameState = "IN_PROGRESS";
         },
         submitGuess() {
             if (this.currentGuess.length !== 5) {
@@ -188,6 +219,7 @@ export default {
             }
             this.guesses.push(newGuess);
             this.resetLetters();
+            this.checkVictory();
         },
     },
 };

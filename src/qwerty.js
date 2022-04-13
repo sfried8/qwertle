@@ -29,15 +29,20 @@ const letters = [
 const locations = {};
 let maxDistance = 0;
 const init = () => {
+  if (!Object.keys(locations).length) {
+
+  
   letters.forEach((l) => {
     const keyEl = document.getElementById("key-" + l);
     const keyBB = keyEl.getBoundingClientRect();
     locations[l] = [keyBB.left + keyBB.width / 2, keyBB.top + keyBB.height / 2];
   });
   maxDistance = getDistance("Q", "P");
+  }
 };
 
 const getDistance = (letterA, letterB) => {
+  init()
   const aLocation = locations[letterA.toUpperCase()];
   const bLocation = locations[letterB.toUpperCase()];
 
@@ -86,6 +91,7 @@ function HSVtoRGB(h, s, v) {
   )})`;
 }
 const getColorFromDistance = (distance) => {
+  init()
   if (distance === 0) {
     return "forestgreen";
   }

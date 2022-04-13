@@ -1,13 +1,23 @@
 <template>
     <div class="statistics-container">
         <h3>Statistics</h3>
-        <p>coming soon...</p>
+        <p>{{ stats }}</p>
         <div class="x-button" @click="$emit('close')">X</div>
     </div>
 </template>
 
 <script>
-export default {};
+import { getItem } from "../SaveDataManager";
+export default {
+    mounted() {
+        this.stats = getItem("stats");
+    },
+    data() {
+        return {
+            stats: {},
+        };
+    },
+};
 </script>
 
 <style>

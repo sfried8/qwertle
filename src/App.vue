@@ -21,33 +21,21 @@ import GameMain from "./components/GameMain.vue";
 import HowToPlay from "./components/HowToPlay.vue";
 import StatisticsModal from "./components/StatisticsModal.vue";
 import PageHeader from "./components/PageHeader.vue";
+import { getItem, setItem } from "./SaveDataManager";
 
 export default {
     name: "App",
     data() {
         return {
-            qwertleData: {},
             showingHowToPlay: false,
             showingStatistics: false,
         };
     },
     mounted() {
-        this.qwertleData = JSON.parse(
-            window.localStorage.getItem("qwertleData") || "{}"
-        );
-        if (!this.qwertleData.seenHowToPlay) {
+        if (!getItem("seenHowToPlay")) {
             this.showingHowToPlay = true;
-            this.setQwertleData("seenHowToPlay", true);
+            setItem("seenHowToPlay", true);
         }
-    },
-    methods: {
-        setQwertleData(name, value) {
-            this.qwertleData[name] = value;
-            window.localStorage.setItem(
-                "qwertleData",
-                JSON.stringify(this.qwertleData)
-            );
-        },
     },
     components: {
         GameMain,
