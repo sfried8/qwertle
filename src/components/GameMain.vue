@@ -160,7 +160,9 @@ export default {
         },
         endGame() {
             saveToStats(this.guesses.length, this.gameState === "WIN");
-            this.$emit("statistics");
+            setTimeout(() => {
+                this.$emit("statistics");
+            }, 1500);
         },
         keyPress(key) {
             if (key === "Backspace" && this.currentIndex > 0) {
