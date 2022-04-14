@@ -18,56 +18,61 @@
             </tr>
         </table>
         <div class="guess-distribution">
-            guess distribution WIP
-            <!-- <div>
-                1:
+            <h4>GUESS DISTRIBUTION</h4>
+            <div class="guess-distribution-line">
+                <div>1:</div>
                 <div
                     class="guess-bar"
-                    :style="{ width: stats.guesses[1] + '00px' }"
+                    :class="{ 'guess-bar-highlight': 1 === highlightedGuess }"
+                    :style="{ width: guessPercents[1] + '%' }"
                 />
+                <div>{{ stats.guesses[1] }}</div>
             </div>
-            <div>
-                2:
+            <div class="guess-distribution-line">
+                <div>2:</div>
                 <div
                     class="guess-bar"
-                    :style="{ width: stats.guesses[2] + '00px' }"
+                    :class="{ 'guess-bar-highlight': 2 === highlightedGuess }"
+                    :style="{ width: guessPercents[2] + '%' }"
                 />
+                <div>{{ stats.guesses[2] }}</div>
             </div>
-            <div>
-                3:
+            <div class="guess-distribution-line">
+                <div>3:</div>
                 <div
                     class="guess-bar"
-                    :style="{ width: stats.guesses[3] + '00px' }"
+                    :class="{ 'guess-bar-highlight': 3 === highlightedGuess }"
+                    :style="{ width: guessPercents[3] + '%' }"
                 />
+                <div>{{ stats.guesses[3] }}</div>
             </div>
-            <div>
-                4:
+            <div class="guess-distribution-line">
+                <div>4:</div>
                 <div
                     class="guess-bar"
-                    :style="{ width: stats.guesses[4] + '00px' }"
+                    :class="{ 'guess-bar-highlight': 4 === highlightedGuess }"
+                    :style="{ width: guessPercents[4] + '%' }"
                 />
+                <div>{{ stats.guesses[4] }}</div>
             </div>
-            <div>
-                5:
+            <div class="guess-distribution-line">
+                <div>5:</div>
                 <div
                     class="guess-bar"
-                    :style="{ width: stats.guesses[5] + '00px' }"
+                    :class="{ 'guess-bar-highlight': 5 === highlightedGuess }"
+                    :style="{ width: guessPercents[5] + '%' }"
                 />
+                <div>{{ stats.guesses[5] }}</div>
             </div>
-            <div>
-                6:
+            <div class="guess-distribution-line">
+                <div>6:</div>
                 <div
                     class="guess-bar"
-                    :style="{ width: stats.guesses[6] + '00px' }"
+                    :class="{ 'guess-bar-highlight': 6 === highlightedGuess }"
+                    :style="{ width: guessPercents[6] + '%' }"
                 />
+                <div>{{ stats.guesses[6] }}</div>
             </div>
-            <div>
-                X:
-                <div
-                    class="guess-bar guess-bar-fail"
-                    :style="{ width: stats.guesses['fail'] + '00px' }"
-                />
-            </div> -->
         </div>
         <div class="x-button" @click="$emit('close')">X</div>
     </div>
@@ -83,6 +88,28 @@ export default {
         } else {
             this.stats = existingStats;
         }
+    },
+    computed: {
+        guessPercents() {
+            if (!this.stats) {
+                return {};
+            }
+            const ret = {};
+            const maxGuesses = Math.max(...Object.values(this.stats.guesses));
+            for (let i = 1; i <= 6; i++) {
+                ret[i] = Math.max(
+                    (100 * this.stats.guesses[i]) / maxGuesses,
+                    5
+                );
+            }
+            return ret;
+        },
+        highlightedGuess() {
+            if (getItem("gameState") === "WIN") {
+                return getItem("guesses").length;
+            }
+            return -1;
+        },
     },
     data() {
         return {
@@ -101,17 +128,22 @@ export default {
 
 <style>
 .guess-bar {
-    height: 50px;
-    border-radius: 5px;
-    background-color: forestgreen;
+    height: 20px;
+    background-color: gray;
     display: inline-block;
     margin: 8px;
 }
-.guess-bar-fail {
-    background-color: red;
+.guess-bar-highlight {
+    background-color: forestgreen;
 }
 .guess-distribution {
     padding: 5px;
+    width: 75%;
+    margin: auto;
+}
+.guess-distribution-line {
+    display: flex;
+    align-items: center;
 }
 .statistics-container {
     position: fixed;
