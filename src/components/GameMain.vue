@@ -60,14 +60,8 @@
             v-if="gameState === 'IN_PROGRESS'"
             @letter-typed="keyPress"
         />
-        <h2 v-else-if="gameState === 'WIN'">
-            YOU WIN!
-            <button @click="resetGame()">Play Again</button>
-        </h2>
-        <h2 v-else>
-            YOU LOSE! The word was "{{ answer }}"
-            <button @click="resetGame()">Play Again</button>
-        </h2>
+        <h2 v-else-if="gameState === 'WIN'">YOU WIN!</h2>
+        <h2 v-else>YOU LOSE! The word was "{{ answer }}"</h2>
     </div>
 </template>
 <script>
@@ -75,7 +69,7 @@ import { getDistance, getColorFromDistance } from "../qwerty.js";
 import QwertleKeyboard from "./QwertleKeyboard";
 import { ACCEPTABLE, ANSWERS } from "../dictionary.js";
 import { getItem, setItem } from "../SaveDataManager";
-import { saveToStats } from "../stats";
+import { saveToStats, endStreak } from "../stats";
 
 export default {
     components: { QwertleKeyboard },
@@ -103,12 +97,23 @@ export default {
         window.addEventListener("keydown", (e) => {
             this.keyPress(e.key);
         });
-        this.gameState = getItem("gameState");
-        this.answer = getItem("answer");
+        this.gameState = getItem("gameState") || "IN_PROGRESS";
+        setItem("gameState", this.gameState);
+        const lastAnswer = getItem("answer");
+        const answerArray = Object.keys(ANSWERS);
+
+        const answerIndex = this.getDailyIndex();
+        this.answer = answerArray[answerIndex].toUpperCase();
         this.guesses = getItem("guesses");
 
-        if (!this.answer) {
+        if (this.answer !== lastAnswer) {
             this.resetGame();
+        }
+
+        const mostRecentFinishDay = getItem("mostRecentFinishDay");
+        const daysSinceMostRecent = this.getDailyIndex() - mostRecentFinishDay;
+        if (daysSinceMostRecent > 1) {
+            endStreak();
         }
     },
     data() {
@@ -159,6 +164,7 @@ export default {
             }
         },
         endGame() {
+            setItem("mostRecentFinishDay", this.getDailyIndex());
             saveToStats(this.guesses.length, this.gameState === "WIN");
             setTimeout(() => {
                 this.$emit("statistics");
@@ -187,15 +193,20 @@ export default {
                     "";
             this.currentIndex = 0;
         },
+        getDailyIndex() {
+            const today = new Date();
+            const qwertleEpoch = new Date("04/14/2022");
+            return Math.floor(
+                (today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24)
+            );
+        },
         resetGame() {
             this.resetLetters();
             this.guesses = [];
             const answerArray = Object.keys(ANSWERS);
 
-            this.answer =
-                answerArray[
-                    Math.floor(Math.random() * answerArray.length)
-                ].toUpperCase();
+            const answerIndex = this.getDailyIndex();
+            this.answer = answerArray[answerIndex].toUpperCase();
             this.gameState = "IN_PROGRESS";
         },
         submitGuess() {

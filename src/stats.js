@@ -25,4 +25,19 @@ winPercentage: 0
     stats.winPercentage = Math.round(100 * (stats.gamesWon / stats.gamesPlayed))
     setItem('stats',stats)
 }
-export {saveToStats}
+function endStreak() {
+        let stats = getItem('stats')
+    if (!stats) {
+        stats = {
+currentStreak: 0,
+gamesPlayed: 0,
+gamesWon: 0,
+guesses: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0},
+maxStreak: 0,
+winPercentage: 0
+        }
+    }
+    stats.currentStreak = 0
+    setItem('stats',stats)
+}
+export {saveToStats, endStreak}
