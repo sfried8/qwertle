@@ -27,12 +27,20 @@
             <strong>A</strong>
         </p>
         <h4>A new QWERTLE will be available each day!</h4>
+        <p>Something wrong?<button @click="reset">Reset game</button></p>
         <div class="x-button" @click="$emit('close')">X</div>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+    methods: {
+        reset() {
+            this.$parent.$refs.gameMain.resetGame();
+            this.$emit("close");
+        },
+    },
+};
 </script>
 
 <style>
