@@ -4,7 +4,7 @@
             @how-to-play="showingHowToPlay = true"
             @statistics="showingStatistics = true"
         ></PageHeader>
-        <GameMain />
+        <GameMain @statistics="showingStatistics = true" />
         <HowToPlay
             v-if="showingHowToPlay"
             @close="showingHowToPlay = false"
