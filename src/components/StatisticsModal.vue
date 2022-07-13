@@ -74,12 +74,17 @@
                 <div>{{ stats.guesses[6] }}</div>
             </div>
         </div>
+        <div v-if="shareButtonEnabled">
+            <button @click="share">SHARE</button>
+        </div>
         <div class="x-button" @click="$emit('close')">X</div>
     </div>
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
 import { getItem, setItem } from "../SaveDataManager";
+import { getDistance } from "../qwerty";
 export default {
     mounted() {
         const existingStats = getItem("stats");
@@ -99,7 +104,7 @@ export default {
             for (let i = 1; i <= 6; i++) {
                 ret[i] = Math.max(
                     (100 * this.stats.guesses[i]) / maxGuesses,
-                    5
+                    2
                 );
             }
             return ret;
@@ -109,6 +114,9 @@ export default {
                 return getItem("guesses").length;
             }
             return -1;
+        },
+        shareButtonEnabled() {
+            return getItem("gameState") !== "IN_PROGRESS";
         },
     },
     data() {
@@ -122,6 +130,44 @@ export default {
                 winPercentage: 0,
             },
         };
+    },
+    methods: {
+        share() {
+            //
+            const guesses = getItem("guesses");
+            const maxDistance = getDistance("Q", "P");
+            const str = guesses
+                .map((g) => {
+                    return g
+                        .map((l) => {
+                            if (l.distance === 0) {
+                                return "🟩";
+                            }
+                            if (l.distance / maxDistance < 0.25) {
+                                return "🟨";
+                            }
+                            return "⬛";
+                        })
+                        .join("");
+                })
+                .join("\n");
+            const today = new Date();
+            const qwertleEpoch = new Date("04/14/2022");
+            const todaysNumber = Math.floor(
+                (today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24)
+            );
+            const todaysGuesses =
+                getItem("gameState") === "WIN" ? guesses.length : "X";
+            const toast = useToast();
+            try {
+                navigator.clipboard
+                    .writeText(`QWERTLE #${todaysNumber} ${todaysGuesses}/6
+${str}`);
+                toast.success("Copied to clipboard", { timeout: 2500 });
+            } catch (error) {
+                toast.error("Error copying to clipboard", { timeout: 2500 });
+            }
+        },
     },
 };
 </script>

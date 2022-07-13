@@ -70,6 +70,7 @@ import QwertleKeyboard from "./QwertleKeyboard";
 import { ACCEPTABLE, ANSWERS } from "../dictionary.js";
 import { getItem, setItem } from "../SaveDataManager";
 import { saveToStats, endStreak } from "../stats";
+import { useToast } from "vue-toastification";
 
 export default {
     components: { QwertleKeyboard },
@@ -217,7 +218,11 @@ export default {
                 !ACCEPTABLE[this.currentGuess.toUpperCase()] &&
                 !ANSWERS[this.currentGuess.toUpperCase()]
             ) {
-                alert("not a word!");
+                useToast().error("Not a word!", {
+                    timeout: 3000,
+                    hideProgressBar: true,
+                    icon: false,
+                });
                 return;
             }
             const newGuess = [];
