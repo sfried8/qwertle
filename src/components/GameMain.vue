@@ -78,9 +78,9 @@ export default {
         answer(val) {
             setItem("answer", val);
         },
-        gameState(val) {
-            setItem("gameState", val);
-        },
+        // gameState(val) {
+        //     setItem("gameState", val);
+        // },
         guesses: {
             deep: true,
             handler(val) {
@@ -98,8 +98,8 @@ export default {
         window.addEventListener("keydown", (e) => {
             this.keyPress(e.key);
         });
-        this.gameState = getItem("gameState") || "IN_PROGRESS";
-        setItem("gameState", this.gameState);
+        // this.gameState = getItem("gameState") || "IN_PROGRESS";
+        // setItem("gameState", this.gameState);
         const lastAnswer = getItem("answer");
         const answerArray = Object.keys(ANSWERS);
 
@@ -128,7 +128,6 @@ export default {
             letter2: "",
             letter3: "",
             letter4: "",
-            gameState: "IN_PROGRESS",
         };
     },
     computed: {
@@ -145,22 +144,23 @@ export default {
         currentLettersToShow() {
             return this.guesses.map((g) => g[this.currentIndex]?.letter);
         },
-    },
-    methods: {
-        checkVictory() {
-            if (!this.guesses.length) {
-                this.gameState = "IN_PROGRESS";
-                return;
-            }
+        gameState() {
             if (
+                this.guesses.length > 0 &&
                 this.guesses[this.guesses.length - 1].every(
                     (g) => g.distance === 0
                 )
             ) {
-                this.gameState = "WIN";
-                this.endGame();
+                return "WIN";
             } else if (this.guesses.length === 6) {
-                this.gameState = "LOSE";
+                return "LOSE";
+            }
+            return "IN_PROGRESS";
+        },
+    },
+    methods: {
+        checkVictory() {
+            if (this.gameState !== "IN_PROGRESS") {
                 this.endGame();
             }
         },
@@ -208,7 +208,6 @@ export default {
 
             const answerIndex = this.getDailyIndex();
             this.answer = answerArray[answerIndex].toUpperCase();
-            this.gameState = "IN_PROGRESS";
         },
         submitGuess() {
             if (this.currentGuess.length !== 5) {

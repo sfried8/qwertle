@@ -1,83 +1,97 @@
 <template>
     <div class="statistics-container">
-        <h3>Statistics</h3>
-        <table style="width: 100%">
-            <thead>
-                <td>Current<br />Streak</td>
-                <td>Longest<br />Streak</td>
-                <td>Games<br />Played</td>
-                <td>Games<br />Won</td>
-                <td>Win<br />Percent</td>
-            </thead>
-            <tr>
-                <td>{{ stats.currentStreak }}</td>
-                <td>{{ stats.maxStreak }}</td>
-                <td>{{ stats.gamesPlayed }}</td>
-                <td>{{ stats.gamesWon }}</td>
-                <td>{{ stats.winPercentage }}</td>
-            </tr>
-        </table>
-        <div class="guess-distribution">
-            <h4>GUESS DISTRIBUTION</h4>
-            <div class="guess-distribution-line">
-                <div>1:</div>
-                <div
-                    class="guess-bar"
-                    :class="{ 'guess-bar-highlight': 1 === highlightedGuess }"
-                    :style="{ width: guessPercents[1] + '%' }"
-                />
-                <div>{{ stats.guesses[1] }}</div>
+        <div class="statistics-container-inner">
+            <h3>Statistics</h3>
+            <table style="width: 100%">
+                <thead>
+                    <td>Current<br />Streak</td>
+                    <td>Longest<br />Streak</td>
+                    <td>Games<br />Played</td>
+                    <td>Games<br />Won</td>
+                    <td>Win<br />Percent</td>
+                </thead>
+                <tr>
+                    <td>{{ stats.currentStreak }}</td>
+                    <td>{{ stats.maxStreak }}</td>
+                    <td>{{ stats.gamesPlayed }}</td>
+                    <td>{{ stats.gamesWon }}</td>
+                    <td>{{ stats.winPercentage }}</td>
+                </tr>
+            </table>
+            <div class="guess-distribution">
+                <h4>GUESS DISTRIBUTION</h4>
+                <div class="guess-distribution-line">
+                    <div>1:</div>
+                    <div
+                        class="guess-bar"
+                        :class="{
+                            'guess-bar-highlight': 1 === highlightedGuess,
+                        }"
+                        :style="{ width: guessPercents[1] + '%' }"
+                    />
+                    <div>{{ stats.guesses[1] }}</div>
+                </div>
+                <div class="guess-distribution-line">
+                    <div>2:</div>
+                    <div
+                        class="guess-bar"
+                        :class="{
+                            'guess-bar-highlight': 2 === highlightedGuess,
+                        }"
+                        :style="{ width: guessPercents[2] + '%' }"
+                    />
+                    <div>{{ stats.guesses[2] }}</div>
+                </div>
+                <div class="guess-distribution-line">
+                    <div>3:</div>
+                    <div
+                        class="guess-bar"
+                        :class="{
+                            'guess-bar-highlight': 3 === highlightedGuess,
+                        }"
+                        :style="{ width: guessPercents[3] + '%' }"
+                    />
+                    <div>{{ stats.guesses[3] }}</div>
+                </div>
+                <div class="guess-distribution-line">
+                    <div>4:</div>
+                    <div
+                        class="guess-bar"
+                        :class="{
+                            'guess-bar-highlight': 4 === highlightedGuess,
+                        }"
+                        :style="{ width: guessPercents[4] + '%' }"
+                    />
+                    <div>{{ stats.guesses[4] }}</div>
+                </div>
+                <div class="guess-distribution-line">
+                    <div>5:</div>
+                    <div
+                        class="guess-bar"
+                        :class="{
+                            'guess-bar-highlight': 5 === highlightedGuess,
+                        }"
+                        :style="{ width: guessPercents[5] + '%' }"
+                    />
+                    <div>{{ stats.guesses[5] }}</div>
+                </div>
+                <div class="guess-distribution-line">
+                    <div>6:</div>
+                    <div
+                        class="guess-bar"
+                        :class="{
+                            'guess-bar-highlight': 6 === highlightedGuess,
+                        }"
+                        :style="{ width: guessPercents[6] + '%' }"
+                    />
+                    <div>{{ stats.guesses[6] }}</div>
+                </div>
             </div>
-            <div class="guess-distribution-line">
-                <div>2:</div>
-                <div
-                    class="guess-bar"
-                    :class="{ 'guess-bar-highlight': 2 === highlightedGuess }"
-                    :style="{ width: guessPercents[2] + '%' }"
-                />
-                <div>{{ stats.guesses[2] }}</div>
+            <div v-if="shareButtonEnabled">
+                <button @click="share">SHARE</button>
             </div>
-            <div class="guess-distribution-line">
-                <div>3:</div>
-                <div
-                    class="guess-bar"
-                    :class="{ 'guess-bar-highlight': 3 === highlightedGuess }"
-                    :style="{ width: guessPercents[3] + '%' }"
-                />
-                <div>{{ stats.guesses[3] }}</div>
-            </div>
-            <div class="guess-distribution-line">
-                <div>4:</div>
-                <div
-                    class="guess-bar"
-                    :class="{ 'guess-bar-highlight': 4 === highlightedGuess }"
-                    :style="{ width: guessPercents[4] + '%' }"
-                />
-                <div>{{ stats.guesses[4] }}</div>
-            </div>
-            <div class="guess-distribution-line">
-                <div>5:</div>
-                <div
-                    class="guess-bar"
-                    :class="{ 'guess-bar-highlight': 5 === highlightedGuess }"
-                    :style="{ width: guessPercents[5] + '%' }"
-                />
-                <div>{{ stats.guesses[5] }}</div>
-            </div>
-            <div class="guess-distribution-line">
-                <div>6:</div>
-                <div
-                    class="guess-bar"
-                    :class="{ 'guess-bar-highlight': 6 === highlightedGuess }"
-                    :style="{ width: guessPercents[6] + '%' }"
-                />
-                <div>{{ stats.guesses[6] }}</div>
-            </div>
+            <div class="x-button" @click="$emit('close')">X</div>
         </div>
-        <div v-if="shareButtonEnabled">
-            <button @click="share">SHARE</button>
-        </div>
-        <div class="x-button" @click="$emit('close')">X</div>
     </div>
 </template>
 
@@ -110,13 +124,15 @@ export default {
             return ret;
         },
         highlightedGuess() {
-            if (getItem("gameState") === "WIN") {
+            if (this.$parent.$parent.$refs.gameMain.gameState === "WIN") {
                 return getItem("guesses").length;
             }
             return -1;
         },
         shareButtonEnabled() {
-            return getItem("gameState") !== "IN_PROGRESS";
+            return (
+                this.$parent.$parent.$refs.gameMain.gameState !== "IN_PROGRESS"
+            );
         },
     },
     data() {
@@ -157,7 +173,9 @@ export default {
                 (today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24)
             );
             const todaysGuesses =
-                getItem("gameState") === "WIN" ? guesses.length : "X";
+                this.$parent.$parent.$refs.gameMain.gameState === "WIN"
+                    ? guesses.length
+                    : "X";
             const toast = useToast();
             try {
                 navigator.clipboard
@@ -191,6 +209,14 @@ ${str}`);
     display: flex;
     align-items: center;
 }
+.statistics-container-inner {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    height: 80%;
+    max-height: 750px;
+    background-color: #121213;
+}
 .statistics-container {
     position: fixed;
     padding: 5vw;
@@ -198,13 +224,15 @@ ${str}`);
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: #121213;
     color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .x-button {
-    position: fixed;
-    top: 7vw;
-    right: 7vw;
+    position: absolute;
+    top: 15px;
+    right: 15px;
     width: 25px;
     height: 25px;
 }
