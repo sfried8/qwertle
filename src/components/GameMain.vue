@@ -24,7 +24,7 @@
             </div>
 
             <div v-if="guesses.length < 6">
-                <div class="guess-container">
+                <div class="guess-container" :class="isWiggling ? 'wrongAnswer':''">
                     <div class="previous-guess-letter" :style="{}">
                         {{ letter0 }}
                     </div>
@@ -122,6 +122,7 @@ export default {
     data() {
         return {
             isAnimating: false,
+            isWiggling: false,
             hoveringGuessLetter: "",
             answer: "",
             guesses: [],
@@ -183,6 +184,9 @@ export default {
             }, 1500);
         },
         keyPress(key) {
+            if (this.isAnimating) {
+                return
+            }
             if (key === "Backspace" && this.currentIndex > 0) {
                 this.currentIndex -= 1;
                 this["letter" + this.currentIndex] = "";
@@ -228,6 +232,10 @@ export default {
                 !ACCEPTABLE[this.currentGuess.toUpperCase()] &&
                 !ANSWERS[this.currentGuess.toUpperCase()]
             ) {
+                this.isWiggling = true
+                setTimeout(() => {
+                    this.isWiggling = false
+                }, 550);
                 useToast().error("Not a word!", {
                     timeout: 3000,
                     hideProgressBar: true,
@@ -372,6 +380,25 @@ export default {
         100% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');    
         transform: rotateX(0deg);
+    }
+}
+.wrongAnswer {
+    animation-name: wiggle;
+    animation-duration:  110ms;
+    animation-iteration-count: 5;
+}
+@keyframes wiggle {
+    0% {
+        transform: translate(0,0);
+    }
+    33% {
+        transform: translate(5px,0);
+    }
+    66% {
+        transform: translate(-5px,0);
+    }
+    100% {
+        transform: translate(0,0);
     }
 }
 </style>
