@@ -77,6 +77,7 @@ export default {
     align-items: center;
 }
 .keyboard-key {
+    user-select: none;
     border-radius: 5px;
     height: 60px;
     color: white;

@@ -216,6 +216,8 @@ ${str}`);
     height: 80%;
     max-height: 750px;
     background-color: #121213;
+        overflow-y: auto;
+
 }
 .statistics-container {
     position: fixed;

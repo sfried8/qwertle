@@ -92,6 +92,9 @@ function HSVtoRGB(h, s, v) {
 }
 const getColorFromDistance = (distance) => {
   init()
+  if (distance === null) {
+    return null
+  }
   if (distance === 0) {
     return "forestgreen";
   }

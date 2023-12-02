@@ -55,6 +55,7 @@ export default {
     height: 90%;
     max-height: 750px;
     background-color: #121213;
+    overflow-y: auto;
 }
 .how-to-play-container {
     position: fixed;

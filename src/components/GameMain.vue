@@ -3,18 +3,20 @@
         <div class="game-board">
             <div
                 class="guess-container"
-                v-for="previousGuess in guesses"
+                v-for="(previousGuess, i) in guesses"
                 :key="JSON.stringify(previousGuess)"
             >
                 <div
                     class="previous-guess-letter"
-                    v-for="(letter, i) in previousGuess"
+                    v-for="(letter, j) in previousGuess"
                     :style="{
-                        'background-color': getColorFromDistance(
-                            letter.distance
-                        ),
+                        'background-color': i == guesses.length-1 && isAnimating? '':colorsOfPreviousGuesses[i][j],
+                        'animation-name': i == guesses.length-1 && isAnimating ? 'flip-reveal'+j : '',
+                        'animation-duration': '550ms',
+                        'animation-delay': 600*j + 'ms',
+                        'animation-fill-mode':'forwards'
                     }"
-                    :key="letter.letter + i"
+                    :key="letter.letter + j"
                     @mouseenter="hoveringGuessLetter = letter.letter"
                 >
                     {{ letter.letter }}
@@ -55,7 +57,7 @@
             </div>
         </div>
         <QwertleKeyboard
-            :highlight="answer.charAt(currentIndex)"
+            :highlight="isAnimating ? '' : answer.charAt(currentIndex)"
             :letters-to-show="currentLettersToShow"
             v-if="gameState === 'IN_PROGRESS'"
             @letter-typed="keyPress"
@@ -119,6 +121,7 @@ export default {
     },
     data() {
         return {
+            isAnimating: false,
             hoveringGuessLetter: "",
             answer: "",
             guesses: [],
@@ -145,6 +148,9 @@ export default {
             return this.guesses.map((g) => g[this.currentIndex]?.letter);
         },
         gameState() {
+            if (this.isAnimating) {
+                return "IN_PROGRESS"
+            }
             if (
                 this.guesses.length > 0 &&
                 this.guesses[this.guesses.length - 1].every(
@@ -157,6 +163,11 @@ export default {
             }
             return "IN_PROGRESS";
         },
+        colorsOfPreviousGuesses() {
+            return this.guesses.map(g=>{
+                return g.map(l=>getColorFromDistance(l.distance))
+            })
+        }
     },
     methods: {
         checkVictory() {
@@ -234,9 +245,15 @@ export default {
                     ),
                 });
             }
-            this.guesses.push(newGuess);
+            this.guesses.push(newGuess)
             this.resetLetters();
-            this.checkVictory();
+            this.isAnimating = true
+            setTimeout(() => {
+
+                this.isAnimating = false
+                this.checkVictory();
+                
+            }, 2950);
         },
     },
 };
@@ -271,5 +288,90 @@ export default {
     font-size: 1.5rem;
     border: 2px solid #3a3a3c;
     margin: 2px;
+}
+
+@keyframes flip-reveal0 {
+    0% {
+        background-color: #121213;
+        transform: rotateX(0);
+    }
+    50% {
+        background-color: #121213;
+        transform: rotateX(-90deg);
+    }
+    51% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0]');
+    }
+    100% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0]');
+        transform: rotateX(0deg);
+    }
+}
+@keyframes flip-reveal1 {
+    0% {
+        background-color: #121213;
+        transform: rotateX(0);
+    }
+    50% {
+        background-color: #121213;
+        transform: rotateX(-90deg);
+    }
+    51% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1]');
+    }
+    100% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1]');
+        transform: rotateX(0deg);
+    }
+}
+@keyframes flip-reveal2 {
+    0% {
+        background-color: #121213;
+        transform: rotateX(0);
+    }
+    50% {
+        background-color: #121213;
+        transform: rotateX(-90deg);
+    }
+    51% {
+                background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2]');
+            }
+            100% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2]');
+        transform: rotateX(0deg);
+    }
+}
+@keyframes flip-reveal3 {
+    0% {
+        background-color: #121213;
+        transform: rotateX(0);
+    }
+    50% {
+        background-color: #121213;
+        transform: rotateX(-90deg);
+    }
+    51% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3]');
+    }
+    100% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3]');
+        transform: rotateX(0deg);
+    }
+}
+@keyframes flip-reveal4 {
+    0% {
+        background-color: #121213;
+        transform: rotateX(0);
+    }
+    50% {
+        background-color: #121213;
+        transform: rotateX(-90deg);
+    }
+    51% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');    }
+        100% {
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');    
+        transform: rotateX(0deg);
+    }
 }
 </style>
