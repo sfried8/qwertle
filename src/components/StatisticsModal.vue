@@ -90,6 +90,10 @@
             <div v-if="shareButtonEnabled">
                 <button @click="share">SHARE</button>
             </div>
+            <div>
+                <button @click="exportStats">EXPORT</button>
+                <button @click="importStats">IMPORT</button>
+            </div>
             <div class="x-button" @click="$emit('close')">X</div>
         </div>
     </div>
@@ -186,6 +190,57 @@ ${str}`);
                 toast.error("Error copying to clipboard", { timeout: 2500 });
             }
         },
+        exportStats() {
+            const toast = useToast();
+                        try {
+
+                navigator.clipboard
+                    .writeText(JSON.stringify(this.stats));
+                toast.success("Copied to clipboard", { timeout: 2500 });
+            } catch (error) {
+                toast.error("Error copying to clipboard", { timeout: 2500 });
+            }
+        },
+        validateImport(imported) {
+            const checkKeys = (source,test) => {
+                for (const k in source) {
+                    if (typeof source[k] == "object") {
+                        if (typeof test[k] !== "object" || !checkKeys(source[k],test[k])) {
+                            return false
+                        }
+                    }
+                    if (typeof source[k] !== typeof test[k]) {
+                        return false
+                    }
+                }
+                return true
+
+            }
+            const expected = JSON.parse(JSON.stringify(this.stats))
+            console.log(expected)
+            return checkKeys(expected,imported) && checkKeys(imported,expected)
+        },
+        async importStats() {
+            const toast = useToast();
+                                    try {
+
+                                            const imported = JSON.parse(prompt("Paste stats to import"))
+                                        
+
+                                        if (this.validateImport(imported)) {
+                                            this.stats = imported
+                                            setItem("stats",this.stats)
+                                            toast.success("Successfully imported stats", { timeout: 2500 });
+                                        } else {
+
+                                            toast.error("Error copying to clipboard", { timeout: 2500 });
+                                        }
+
+            } catch (error) {
+                console.error(error)
+                toast.error("Error copying to clipboard", { timeout: 2500 });
+            }
+        }
     },
 };
 </script>
