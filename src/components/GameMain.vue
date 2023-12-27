@@ -13,7 +13,7 @@
                         'background-color': i == guesses.length-1 && isAnimating? '':colorsOfPreviousGuesses[i][j],
                         'animation-name': i == guesses.length-1 && isAnimating ? 'flip-reveal'+j : '',
                         'animation-duration': '550ms',
-                        'animation-delay': 600*j + 'ms',
+                        'animation-delay': 300*j + 'ms',
                         'animation-fill-mode':'forwards'
                     }"
                     :key="letter.letter + j"
@@ -261,7 +261,7 @@ export default {
                 this.isAnimating = false
                 this.checkVictory();
                 
-            }, 2950);
+            }, 1750);
         },
     },
 };
