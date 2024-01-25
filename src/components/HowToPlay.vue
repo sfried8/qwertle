@@ -28,8 +28,7 @@
                 <strong>A</strong>
             </p>
             <h4>A new QWERTLE will be available each day!</h4>
-            <!-- <p> -->
-            <!-- Something wrong?&nbsp;<button @click="reset">Reset game</button> -->
+                        <!-- Something wrong?&nbsp;<button @click="reset">Reset game</button> -->
             <!-- </p> -->
             <div class="x-button" @click="$emit('close')">X</div>
         </div>

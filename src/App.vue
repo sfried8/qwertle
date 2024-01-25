@@ -3,13 +3,14 @@
         <PageHeader
             @how-to-play="showingHowToPlay = true"
             @statistics="showingStatistics = true"
+            @donate="showingDonate = true"
         ></PageHeader>
         <GameMain ref="gameMain" @statistics="showingStatistics = true" />
         <Transition name="modal-background">
             <div
                 class="modal-background"
-                v-if="showingStatistics || showingHowToPlay"
-                @click="showingStatistics = showingHowToPlay = false"
+                v-if="showingStatistics || showingHowToPlay || showingDonate"
+                @click="showingStatistics = showingHowToPlay = showingDonate = false"
             ></div>
         </Transition>
         <Transition appear name="modal">
@@ -26,6 +27,13 @@
                 @close="showingStatistics = false"
             ></StatisticsModal>
         </Transition>
+                <Transition appear name="modal">
+            <DonateModal
+                class="modal"
+                v-if="showingDonate"
+                @close="showingDonate = false"
+            ></DonateModal>
+        </Transition>
     </div>
 </template>
 
@@ -33,6 +41,7 @@
 import GameMain from "./components/GameMain.vue";
 import HowToPlay from "./components/HowToPlay.vue";
 import StatisticsModal from "./components/StatisticsModal.vue";
+import DonateModal from "./components/DonateModal.vue";
 import PageHeader from "./components/PageHeader.vue";
 import { getItem, setItem } from "./SaveDataManager";
 
@@ -42,6 +51,7 @@ export default {
         return {
             showingHowToPlay: false,
             showingStatistics: false,
+            showingDonate:false,
         };
     },
     mounted() {
@@ -55,6 +65,7 @@ export default {
         HowToPlay,
         PageHeader,
         StatisticsModal,
+        DonateModal
     },
 };
 </script>

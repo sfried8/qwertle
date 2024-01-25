@@ -88,11 +88,7 @@
                 </div>
             </div>
             <div v-if="shareButtonEnabled">
-                <button @click="share">SHARE</button>
-            </div>
-            <div>
-                <button @click="exportStats">EXPORT</button>
-                <button @click="importStats">IMPORT</button>
+                <div class="share-btn" @click="share">SHARE</div>
             </div>
             <div class="x-button" @click="$emit('close')">X</div>
         </div>
@@ -298,5 +294,18 @@ ${str}`);
 }
 .statistics-container thead td {
     font-size: 14px;
+}
+.share-btn {
+    user-select: none;
+    border-radius: 5px;
+    height: 60px;
+    color: white;
+    font-weight: bold;
+    background-color: forestgreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px;
+
 }
 </style>
