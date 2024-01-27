@@ -9,8 +9,8 @@
             </p>
             <p>
                 After each guess, the color of the tiles will change to show how
-                close each letter is on a QWERTY keyboard. The darker red the
-                letter, the closer the keys are. A green letter is correct.
+                <i>physically</i> close each letter is on a QWERTY keyboard. This is measured by the pixel distance between the centers of each key.
+                A black letter on a white background is correct.
             </p>
             <h4>Example</h4>
             <div class="guess-container">
@@ -24,7 +24,7 @@
             <p>The second letter is nowhere near <strong>Q</strong></p>
             <p>The third letter is very close to <strong>U</strong></p>
             <p>
-                The fourth letter is a few keys away from
+                The fourth letter is halfway across the keyboard from
                 <strong>A</strong>
             </p>
             <h4>A new QWERTLE will be available each day!</h4>
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { getColorFromDistance, getDistance } from '@/qwerty';
+
 export default {
     methods: {
         reset() {
@@ -43,6 +45,15 @@ export default {
             this.$emit("close");
         },
     },
+    computed: {
+        colorRange() {
+            //eslint-disable-next-line
+            const currentscheme = this.$parent.colorscheme
+            const maxDistance = getDistance("Q", "P");
+            const minDistance = getDistance("Q", "W")
+            return [ getColorFromDistance(maxDistance), getColorFromDistance((maxDistance + minDistance)/2), getColorFromDistance(minDistance) ]
+        }
+    }
 };
 </script>
 
@@ -69,16 +80,18 @@ export default {
     align-items: center;
 }
 .min-distance {
-    background-color: rgb(37, 3, 1);
+    background-color: v-bind('colorRange[2]');
 }
 .mid-distance {
-    background-color: rgb(125, 8, 2);
+    background-color: v-bind('colorRange[1]')
 }
 .max-distance {
-    background-color: rgb(255, 26, 0);
+    background-color: v-bind('colorRange[0]')
 }
 .correct {
-    background-color: forestgreen;
+    color: black;
+    text-shadow: none;
+    background-color: white;
 }
 .guess-container {
     display: flex;

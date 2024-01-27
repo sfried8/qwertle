@@ -16,8 +16,14 @@
                         hoveringLetter &&
                         l.length === 1 &&
                         lettersToShow.indexOf(l) >= 0
-                            ? getColorFromDistance(hoveringLetter, l)
+                            ? getColorFromDistance(hoveringLetter, l, $parent.colorscheme)
                             : '#818384',
+                    'color':                        hoveringLetter &&
+                        l.length === 1 &&
+                        lettersToShow.indexOf(l) >= 0
+                            && getColorFromDistance(hoveringLetter, l, $parent.colorscheme) == 'white' ? 'black' : '',
+                            'text-shadow': !hoveringLetter || l.length !== 1 || lettersToShow.indexOf(l) < 0 || getColorFromDistance(hoveringLetter, l, $parent.colorscheme) == 'white' ? 'none' :''
+
                 }"
                 @click="$emit('letter-typed', l)"
             >
@@ -46,11 +52,11 @@ export default {
             ],
         };
     },
-    methods: {
-        getColorFromDistance(letterA, letterB) {
-            const c = getColorFromDistance(getDistance(letterA, letterB));
+    computed: {
+        getColorFromDistance(){ return (letterA, letterB) => {
+            const c = getColorFromDistance(getDistance(letterA, letterB),this.$parent.$parent.colorscheme);
             return c;
-        },
+        }},
     },
     watch: {
         highlight(newVal) {
@@ -83,6 +89,8 @@ export default {
     color: white;
     font-weight: bold;
     background-color: #818384;
+        text-shadow: 1px 1px 2px black;
+
     display: flex;
     justify-content: center;
     flex: 1;

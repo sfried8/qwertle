@@ -3,8 +3,12 @@
         <div class="htp-icon" @click="$emit('how-to-play')">?</div>
         <div><h2>QWERTLE</h2></div>
         <div style="display: flex;">
-
+       
        <div class="htp-icon" @click="$emit('donate')">$</div>
+       <div style="width:10px"></div>
+       <div class="htp-icon" @click="$emit('accessibility')">⚙
+
+</div>
        <div style="width:10px"></div>
         <div @click="$emit('statistics')">
             <svg
@@ -18,13 +22,18 @@
                     d="M16,11V3H8v6H2v12h20V11H16z M10,5h4v14h-4V5z M4,11h4v8H4V11z M20,19h-4v-6h4V19z"
                 ></path>
             </svg>
+
         </div>
         </div>
     </header>
 </template>
 
 <script>
-export default {};
+
+
+export default {
+
+};
 </script>
 
 <style>

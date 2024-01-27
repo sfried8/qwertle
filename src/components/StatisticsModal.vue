@@ -18,6 +18,9 @@
                     <td>{{ stats.winPercentage }}</td>
                 </tr>
             </table>
+                        <div v-if="shareButtonEnabled">
+                <div class="share-btn" @click="share">SHARE</div>
+            </div>
             <div class="guess-distribution">
                 <h4>GUESS DISTRIBUTION</h4>
                 <div class="guess-distribution-line">
@@ -87,9 +90,7 @@
                     <div>{{ stats.guesses[6] }}</div>
                 </div>
             </div>
-            <div v-if="shareButtonEnabled">
-                <div class="share-btn" @click="share">SHARE</div>
-            </div>
+
             <div class="x-button" @click="$emit('close')">X</div>
         </div>
     </div>
@@ -168,7 +169,7 @@ export default {
                 })
                 .join("\n");
             const today = new Date();
-            const qwertleEpoch = new Date("04/14/2022");
+            const qwertleEpoch = new Date("04/13/2022");
             const todaysNumber = Math.floor(
                 (today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24)
             );
@@ -180,7 +181,8 @@ export default {
             try {
                 navigator.clipboard
                     .writeText(`QWERTLE #${todaysNumber} ${todaysGuesses}/6
-${str}`);
+${str}
+${window.location.href}`);
                 toast.success("Copied to clipboard", { timeout: 2500 });
             } catch (error) {
                 toast.error("Error copying to clipboard", { timeout: 2500 });
@@ -240,7 +242,6 @@ ${str}`);
     },
 };
 </script>
-
 <style>
 .guess-bar {
     height: 20px;

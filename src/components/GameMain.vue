@@ -1,5 +1,6 @@
 <template>
     <div class="game-container">
+        <div class="game-board-and-gauge">
         <div class="game-board">
             <div
                 class="guess-container"
@@ -11,6 +12,8 @@
                     v-for="(letter, j) in previousGuess"
                     :style="{
                         'background-color': i == guesses.length-1 && isAnimating? '':colorsOfPreviousGuesses[i][j],
+                        'color': i == guesses.length-1 && isAnimating || colorsOfPreviousGuesses[i][j] != 'white'? 'white':'black',
+                        'text-shadow': i == guesses.length-1 && isAnimating || colorsOfPreviousGuesses[i][j] != 'white'? '':'none',
                         'animation-name': i == guesses.length-1 && isAnimating ? 'flip-reveal'+j : '',
                         'animation-duration': '550ms',
                         'animation-delay': 300*j + 'ms',
@@ -25,19 +28,19 @@
 
             <div v-if="guesses.length < 6">
                 <div class="guess-container" :class="isWiggling ? 'wrongAnswer':''">
-                    <div class="previous-guess-letter" :style="{}">
+                    <div class="previous-guess-letter" @click="currentIndex=0" :style="{borderColor:!isAnimating && gameState == 'IN_PROGRESS' && currentIndex==0?'white':''}">
                         {{ letter0 }}
                     </div>
-                    <div class="previous-guess-letter" :style="{}">
+                    <div class="previous-guess-letter" @click="currentIndex=1" :style="{borderColor:!isAnimating && gameState == 'IN_PROGRESS' && currentIndex==1?'white':''}">
                         {{ letter1 }}
                     </div>
-                    <div class="previous-guess-letter" :style="{}">
+                    <div class="previous-guess-letter" @click="currentIndex=2" :style="{borderColor:!isAnimating && gameState == 'IN_PROGRESS' && currentIndex==2?'white':''}">
                         {{ letter2 }}
                     </div>
-                    <div class="previous-guess-letter" :style="{}">
+                    <div class="previous-guess-letter" @click="currentIndex=3" :style="{borderColor:!isAnimating && gameState == 'IN_PROGRESS' && currentIndex==3?'white':''}">
                         {{ letter3 }}
                     </div>
-                    <div class="previous-guess-letter" :style="{}">
+                    <div class="previous-guess-letter" @click="currentIndex=4" :style="{borderColor:!isAnimating && gameState == 'IN_PROGRESS' && currentIndex==4?'white':''}">
                         {{ letter4 }}
                     </div>
                 </div>
@@ -55,6 +58,13 @@
                     :key="'placeholder-letter' + letter"
                 ></div>
             </div>
+        </div>
+        <div class="gauge">
+            <span>FAR</span>
+            <!-- <img src="@/assets/colorgauge.png"/> -->
+            <div></div>
+            <span>CLOSE</span>
+        </div>
         </div>
         <QwertleKeyboard
             :highlight="isAnimating ? '' : answer.charAt(currentIndex)"
@@ -135,6 +145,11 @@ export default {
         };
     },
     computed: {
+        colorRange() {
+            const currentscheme = this.$parent.colorscheme
+            return [`hsl(${currentscheme[0][0]}deg, ${currentscheme[0][1]}%, ${currentscheme[0][2]}%)`,
+            `hsl(${currentscheme[1][0]}deg, ${currentscheme[1][1]}%, ${currentscheme[1][2]}%)`]
+        },
         currentGuess() {
             return (
                 this.letter0 +
@@ -166,7 +181,7 @@ export default {
         },
         colorsOfPreviousGuesses() {
             return this.guesses.map(g=>{
-                return g.map(l=>getColorFromDistance(l.distance))
+                return g.map(l=>getColorFromDistance(l.distance,this.$parent.colorscheme))
             })
         }
     },
@@ -188,13 +203,17 @@ export default {
                 return
             }
             if (key === "Backspace" && this.currentIndex > 0) {
-                this.currentIndex -= 1;
+                if (!this["letter" + this.currentIndex]) {
+                    this.currentIndex -= 1;
+                }
                 this["letter" + this.currentIndex] = "";
             } else if (key === "Enter") {
                 this.submitGuess();
             } else if (key.length === 1 && this.currentIndex < 5) {
                 this["letter" + this.currentIndex] = key.toUpperCase();
-                this.currentIndex += 1;
+                while(this["letter" + this.currentIndex]) {
+                    this.currentIndex += 1;
+                }
             }
         },
         getColorFromDistance(distance) {
@@ -211,7 +230,7 @@ export default {
         },
         getDailyIndex() {
             const today = new Date();
-            const qwertleEpoch = new Date("04/14/2022");
+            const qwertleEpoch = new Date("04/13/2022");
             return Math.floor(
                 (today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24)
             );
@@ -275,6 +294,32 @@ export default {
     margin: 4px;
     width: 100%;
 }
+.game-board-and-gauge {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width:100%;
+    max-width: 500px;
+}
+.gauge {
+    margin:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    img {
+        height:240px;
+        width: 20px;
+        
+    }
+    div {
+        height:240px;
+        width: 20px;
+        background: linear-gradient(in hsl, v-bind('colorRange[0]'), v-bind('colorRange[1]'));
+        
+    }
+}
 .game-board {
     margin: 8px 0;
 }
@@ -292,6 +337,7 @@ export default {
     justify-content: center;
     align-items: center;
     color: white;
+    text-shadow: 1px 1px 2px black;
     font-weight: bold;
     font-size: 1.5rem;
     border: 2px solid #3a3a3c;
@@ -309,9 +355,13 @@ export default {
     }
     51% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0] == "white"?"none":""');
     }
     100% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[0] == "white"?"none":""');
         transform: rotateX(0deg);
     }
 }
@@ -326,9 +376,13 @@ export default {
     }
     51% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1] == "white"?"none":""');
     }
     100% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[1] == "white"?"none":""');
         transform: rotateX(0deg);
     }
 }
@@ -343,9 +397,13 @@ export default {
     }
     51% {
                 background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2]');
+                color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2] == "white"?"black":""');
+                text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2] == "white"?"none":""');
             }
             100% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[2] == "white"?"none":""');
         transform: rotateX(0deg);
     }
 }
@@ -360,9 +418,13 @@ export default {
     }
     51% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3] == "white"?"none":""');
     }
     100% {
         background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[3] == "white"?"none":""');
         transform: rotateX(0deg);
     }
 }
@@ -376,9 +438,14 @@ export default {
         transform: rotateX(-90deg);
     }
     51% {
-        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');    }
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4] == "white"?"none":""');    
+    }
         100% {
-        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');    
+        background-color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4]');
+        color: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4] == "white"?"black":""');
+        text-shadow: v-bind('colorsOfPreviousGuesses[guesses.length-1]?.[4] == "white"?"none":""');    
         transform: rotateX(0deg);
     }
 }

@@ -48,18 +48,7 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.min-distance {
-    background-color: rgb(37, 3, 1);
-}
-.mid-distance {
-    background-color: rgb(125, 8, 2);
-}
-.max-distance {
-    background-color: rgb(255, 26, 0);
-}
-.correct {
-    background-color: forestgreen;
-}
+
 .guess-container {
     display: flex;
     justify-content: center;

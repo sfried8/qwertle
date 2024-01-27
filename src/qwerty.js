@@ -1,3 +1,5 @@
+import { getCurrentScheme } from "./colorschemes";
+
 const letters = [
   "A",
   "B",
@@ -28,6 +30,7 @@ const letters = [
 ];
 const locations = {};
 let maxDistance = 0;
+let minDistance = 0;
 const init = () => {
   if (!Object.keys(locations).length) {
 
@@ -38,6 +41,7 @@ const init = () => {
     locations[l] = [keyBB.left + keyBB.width / 2, keyBB.top + keyBB.height / 2];
   });
   maxDistance = getDistance("Q", "P");
+  minDistance = getDistance("Q", "W")
   }
 };
 
@@ -96,8 +100,16 @@ const getColorFromDistance = (distance) => {
     return null
   }
   if (distance === 0) {
-    return "forestgreen";
+    return "white";
   }
-  return HSVtoRGB(0.01, 1, (distance / maxDistance) * 2);
+
+  let t = (distance-minDistance)/(maxDistance-minDistance)
+
+  const [close,far] = getCurrentScheme()
+  const lerp = (i)=>(far[i]+t*(close[i]-far[i]))
+  const res = `hsl(${lerp(0)}deg,${lerp(1)}%, ${lerp(2)}%)`
+  return res
+  // return `rgb(${far[0]+t*(close[0]-far[0])}, ${far[1]+t*(close[1]-far[1])}, ${far[2]+t*(close[2]-far[2])})`//HSVtoRGB(0.01, 1, (distance / maxDistance) * 2);
 };
+
 export { getDistance, getColorFromDistance, HSVtoRGB, init };

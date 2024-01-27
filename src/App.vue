@@ -4,13 +4,15 @@
             @how-to-play="showingHowToPlay = true"
             @statistics="showingStatistics = true"
             @donate="showingDonate = true"
+            @accessibility="showingAccessibility = true"
+            
         ></PageHeader>
         <GameMain ref="gameMain" @statistics="showingStatistics = true" />
         <Transition name="modal-background">
             <div
                 class="modal-background"
-                v-if="showingStatistics || showingHowToPlay || showingDonate"
-                @click="showingStatistics = showingHowToPlay = showingDonate = false"
+                v-if="showingStatistics || showingHowToPlay || showingDonate || showingAccessibility"
+                @click="showingStatistics = showingHowToPlay = showingDonate = showingAccessibility = false"
             ></div>
         </Transition>
         <Transition appear name="modal">
@@ -34,6 +36,15 @@
                 @close="showingDonate = false"
             ></DonateModal>
         </Transition>
+                <Transition appear name="modal">
+            <AccessibilityModal
+                class="modal"
+                v-if="showingAccessibility"
+                @close="showingAccessibility = false"
+                :colorscheme="colorscheme"
+                @change-scheme="newScheme=>changeScheme(newScheme)"
+            ></AccessibilityModal>
+        </Transition>
     </div>
 </template>
 
@@ -42,8 +53,10 @@ import GameMain from "./components/GameMain.vue";
 import HowToPlay from "./components/HowToPlay.vue";
 import StatisticsModal from "./components/StatisticsModal.vue";
 import DonateModal from "./components/DonateModal.vue";
+import AccessibilityModal from "./components/AccessibilityModal.vue";
 import PageHeader from "./components/PageHeader.vue";
 import { getItem, setItem } from "./SaveDataManager";
+import { getCurrentScheme, setCurrentScheme } from "./colorschemes";
 
 export default {
     name: "App",
@@ -52,6 +65,8 @@ export default {
             showingHowToPlay: false,
             showingStatistics: false,
             showingDonate:false,
+            showingAccessibility: false,
+            colorscheme:getCurrentScheme()
         };
     },
     mounted() {
@@ -65,8 +80,15 @@ export default {
         HowToPlay,
         PageHeader,
         StatisticsModal,
-        DonateModal
+        DonateModal,
+        AccessibilityModal
     },
+    methods: {
+        changeScheme(newScheme) {
+            setCurrentScheme(newScheme)
+            this.colorscheme = getCurrentScheme()
+        }
+    }
 };
 </script>
 
