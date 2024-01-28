@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <GameMain :is-daily="true" ref="gameMain"/>
+        <GameMain :is-daily="false" ref="gameMain"/>
     </div>
 </template>
 
@@ -9,7 +9,7 @@ import GameMain from "@/components/GameMain.vue";
 
 
 export default {
-    name: "DailyGame",
+    name: "PracticeGame",
     data() {
         return {
 
