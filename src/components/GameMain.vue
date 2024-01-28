@@ -58,7 +58,7 @@
             v-if="gameState === 'IN_PROGRESS'" @letter-typed="keyPress" />
         <h2 v-else-if="gameState === 'WIN'">YOU WIN!</h2>
         <h2 v-else>YOU LOSE! The word was "{{ answer }}"</h2>
-        <div class="share-btn" @click="resetGame" v-if="!isDaily && gameState != 'IN_PROGRESS'">Play again</div>
+        <div class="play-again-btn" @click="resetGame" v-if="!isDaily && gameState != 'IN_PROGRESS'">Play again</div>
     </div>
 </template>
 <script>
@@ -469,6 +469,20 @@ export default {
     animation-name: wiggle;
     animation-duration: 110ms;
     animation-iteration-count: 5;
+}
+
+.play-again-btn {
+    user-select: none;
+    border-radius: 5px;
+    height: 60px;
+    color: white;
+    font-weight: bold;
+    background-color: forestgreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+
 }
 
 @keyframes wiggle {

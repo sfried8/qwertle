@@ -4,12 +4,16 @@ import AccessibilityModal from '@/components/modals/AccessibilityModal.vue';
 import DonateModal from '@/components/modals/DonateModal.vue';
 import HowToPlay from '@/components/modals/HowToPlay.vue';
 import StatisticsModal from '@/components/modals/StatisticsModal.vue';
+import ChangesModal from '@/components/modals/ChangesModal.vue';
+import SideMenu from '@/components/SideMenu.vue';
 
 const modals = {
   'how-to-play': HowToPlay,
   'statistics': StatisticsModal,
   'donate': DonateModal,
-  'accessibility': AccessibilityModal
+  'accessibility': AccessibilityModal,
+  'sidemenu': SideMenu,
+  'changes': ChangesModal
 }
 export default createStore({
   state() {
@@ -21,6 +25,7 @@ export default createStore({
       mostRecentFinishedDay: new Date('01/01/1970'),
       gameState: "IN_PROGRESS",
       seenHowToPlay: false,
+      lastSeenVersion: "0.0",
       stats: {
         guesses: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0 },
         currentStreak: 0,
@@ -45,6 +50,10 @@ export default createStore({
         this.replaceState(
           Object.assign(state, JSON.parse(localStorage.getItem('qwertleData2')))
         );
+      } else if (localStorage.getItem('qwertleData')) {
+        this.replaceState(
+          Object.assign(state, JSON.parse(localStorage.getItem('qwertleData')))
+        )
       }
     },
     set_current_scheme(state, newSchemeName) {
@@ -77,6 +86,9 @@ export default createStore({
     },
     set_seen_how_to_play(state) {
       state.seenHowToPlay = true
+    },
+    set_last_seen_version(state, version) {
+      state.lastSeenVersion = version
     }
   },
   actions: {

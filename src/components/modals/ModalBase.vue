@@ -1,9 +1,8 @@
 <template>
-    
-    <div class="modal-container">
+    <div class="modal-container" @click.self="hide">
         <div class="modal-container-inner">
 
-<slot></slot>
+            <slot></slot>
             <div class="x-button" @click="hide">X</div>
         </div>
     </div>
@@ -21,24 +20,27 @@ export default {
 
 <style>
 @media screen and (max-height:750px) {
-    .modal-container-inner { 
+    .modal-container-inner {
         max-height: 95vh;
     }
 }
+
 @media screen and (min-height:750px) {
-    .modal-container-inner { 
-            max-height: 750px;
+    .modal-container-inner {
+        max-height: 750px;
     }
 }
+
 .modal-container-inner {
     position: relative;
     width: 90%;
     max-width: 500px;
     /* height: 40%; */
-
+    padding: 10px;
     background-color: #121213;
     overflow-y: auto;
 }
+
 .modal-container {
     position: fixed;
     padding: 5vw;
