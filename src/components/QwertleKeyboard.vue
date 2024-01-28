@@ -16,13 +16,13 @@
                         hoveringLetter &&
                         l.length === 1 &&
                         lettersToShow.indexOf(l) >= 0
-                            ? getColorFromDistance(hoveringLetter, l, $parent.colorscheme)
+                            ? getColorFromDistance(hoveringLetter, l, $store.getters.colorscheme)
                             : '#818384',
                     'color':                        hoveringLetter &&
                         l.length === 1 &&
                         lettersToShow.indexOf(l) >= 0
-                            && getColorFromDistance(hoveringLetter, l, $parent.colorscheme) == 'white' ? 'black' : '',
-                            'text-shadow': !hoveringLetter || l.length !== 1 || lettersToShow.indexOf(l) < 0 || getColorFromDistance(hoveringLetter, l, $parent.colorscheme) == 'white' ? 'none' :''
+                            && getColorFromDistance(hoveringLetter, l, $store.getters.colorscheme) == 'white' ? 'black' : '',
+                            'text-shadow': !hoveringLetter || l.length !== 1 || lettersToShow.indexOf(l) < 0 || getColorFromDistance(hoveringLetter, l, $store.getters.colorscheme) == 'white' ? 'none' :''
 
                 }"
                 @click="$emit('letter-typed', l)"
@@ -54,7 +54,7 @@ export default {
     },
     computed: {
         getColorFromDistance(){ return (letterA, letterB) => {
-            const c = getColorFromDistance(getDistance(letterA, letterB),this.$parent.$parent.colorscheme);
+            const c = getColorFromDistance(getDistance(letterA, letterB),this.$store.getters.colorscheme);
             return c;
         }},
     },

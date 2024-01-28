@@ -1,92 +1,50 @@
 <template>
     <div class="app-container">
         <PageHeader
-            @how-to-play="showingHowToPlay = true"
-            @statistics="showingStatistics = true"
-            @donate="showingDonate = true"
-            @accessibility="showingAccessibility = true"
-            
+           
         ></PageHeader>
-        <GameMain ref="gameMain" @statistics="showingStatistics = true" />
+        <router-view></router-view>
         <Transition name="modal-background">
             <div
                 class="modal-background"
-                v-if="showingStatistics || showingHowToPlay || showingDonate || showingAccessibility"
-                @click="showingStatistics = showingHowToPlay = showingDonate = showingAccessibility = false"
+                v-if="currentmodal != null"
+                @click="hidemodal"
             ></div>
         </Transition>
         <Transition appear name="modal">
-            <HowToPlay
-                class="modal"
-                v-if="showingHowToPlay"
-                @close="showingHowToPlay = false"
-            ></HowToPlay>
-        </Transition>
-        <Transition appear name="modal">
-            <StatisticsModal
-                class="modal"
-                v-if="showingStatistics"
-                @close="showingStatistics = false"
-            ></StatisticsModal>
-        </Transition>
-                <Transition appear name="modal">
-            <DonateModal
-                class="modal"
-                v-if="showingDonate"
-                @close="showingDonate = false"
-            ></DonateModal>
-        </Transition>
-                <Transition appear name="modal">
-            <AccessibilityModal
-                class="modal"
-                v-if="showingAccessibility"
-                @close="showingAccessibility = false"
-                :colorscheme="colorscheme"
-                @change-scheme="newScheme=>changeScheme(newScheme)"
-            ></AccessibilityModal>
+            <component v-if="currentmodal != null" :is="currentmodal"></component>
         </Transition>
     </div>
 </template>
 
 <script>
-import GameMain from "./components/GameMain.vue";
-import HowToPlay from "./components/HowToPlay.vue";
-import StatisticsModal from "./components/StatisticsModal.vue";
-import DonateModal from "./components/DonateModal.vue";
-import AccessibilityModal from "./components/AccessibilityModal.vue";
-import PageHeader from "./components/PageHeader.vue";
-import { getItem, setItem } from "./SaveDataManager";
-import { getCurrentScheme, setCurrentScheme } from "./colorschemes";
+import PageHeader from "@/components/PageHeader.vue";
 
 export default {
     name: "App",
-    data() {
-        return {
-            showingHowToPlay: false,
-            showingStatistics: false,
-            showingDonate:false,
-            showingAccessibility: false,
-            colorscheme:getCurrentScheme()
-        };
+    created() {
+        this.$store.commit('initialize_store')
     },
     mounted() {
-        if (!getItem("seenHowToPlay")) {
-            this.showingHowToPlay = true;
-            setItem("seenHowToPlay", true);
+            setTimeout(() => {
+                
+                if (!this.$store.state.seenHowToPlay) {
+                    this.$store.commit('show_modal','how-to-play')
+                    this.$store.commit('set_seen_how_to_play')
+                }
+            }, 500);
+    },
+    computed: {
+        currentmodal() {
+            return this.$store.getters.currentlyShownModal
         }
     },
     components: {
-        GameMain,
-        HowToPlay,
         PageHeader,
-        StatisticsModal,
-        DonateModal,
-        AccessibilityModal
     },
     methods: {
-        changeScheme(newScheme) {
-            setCurrentScheme(newScheme)
-            this.colorscheme = getCurrentScheme()
+        hidemodal() {
+            this.$store.commit('hide_modal')
         }
     }
 };

@@ -1,8 +1,7 @@
 <template>
-    <div class="statistics-container">
-        <div class="statistics-container-inner">
+<ModalBase>
             <h3>Statistics</h3>
-            <table style="width: 100%">
+            <table class="stats-table">
                 <thead>
                     <td>Current<br />Streak</td>
                     <td>Longest<br />Streak</td>
@@ -91,25 +90,18 @@
                 </div>
             </div>
 
-            <div class="x-button" @click="$emit('close')">X</div>
-        </div>
-    </div>
+</ModalBase>
 </template>
 
 <script>
 import { useToast } from "vue-toastification";
-import { getItem, setItem } from "../SaveDataManager";
-import { getDistance } from "../qwerty";
+import { getDistance } from "@/qwerty";
+import ModalBase from "./ModalBase.vue";
 export default {
-    mounted() {
-        const existingStats = getItem("stats");
-        if (!existingStats) {
-            setItem("stats", this.stats);
-        } else {
-            this.stats = existingStats;
-        }
-    },
     computed: {
+        stats() {
+            return this.$store.state.stats;
+        },
         guessPercents() {
             if (!this.stats) {
                 return {};
@@ -117,66 +109,46 @@ export default {
             const ret = {};
             const maxGuesses = Math.max(...Object.values(this.stats.guesses));
             for (let i = 1; i <= 6; i++) {
-                ret[i] = Math.max(
-                    (100 * this.stats.guesses[i]) / maxGuesses,
-                    2
-                );
+                ret[i] = Math.max((100 * this.stats.guesses[i]) / maxGuesses, 2);
             }
             return ret;
         },
         highlightedGuess() {
-            if (this.$parent.$parent.$refs.gameMain.gameState === "WIN") {
-                return getItem("guesses").length;
+            if (this.$store.state.gameState === "WIN") {
+                return this.$store.state.guesses.length;
             }
             return -1;
         },
         shareButtonEnabled() {
-            return (
-                this.$parent.$parent.$refs.gameMain.gameState !== "IN_PROGRESS"
-            );
+            return (this.$store.state.gameState !== "IN_PROGRESS");
         },
-    },
-    data() {
-        return {
-            stats: {
-                guesses: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0 },
-                currentStreak: 0,
-                gamesPlayed: 0,
-                gamesWon: 0,
-                maxStreak: 0,
-                winPercentage: 0,
-            },
-        };
     },
     methods: {
         share() {
             //
-            const guesses = getItem("guesses");
+            const guesses = this.$store.state.guesses;
             const maxDistance = getDistance("Q", "P");
             const str = guesses
                 .map((g) => {
-                    return g
-                        .map((l) => {
-                            if (l.distance === 0) {
-                                return "🟩";
-                            }
-                            if (l.distance / maxDistance < 0.25) {
-                                return "🟨";
-                            }
-                            return "⬛";
-                        })
-                        .join("");
+                return g
+                    .map((l) => {
+                    if (l.distance === 0) {
+                        return "🟩";
+                    }
+                    if (l.distance / maxDistance < 0.25) {
+                        return "🟨";
+                    }
+                    return "⬛";
                 })
+                    .join("");
+            })
                 .join("\n");
             const today = new Date();
             const qwertleEpoch = new Date("04/13/2022");
-            const todaysNumber = Math.floor(
-                (today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24)
-            );
-            const todaysGuesses =
-                this.$parent.$parent.$refs.gameMain.gameState === "WIN"
-                    ? guesses.length
-                    : "X";
+            const todaysNumber = Math.floor((today.getTime() - qwertleEpoch.getTime()) / (1000 * 3600 * 24));
+            const todaysGuesses = this.$store.state.gameState === "WIN"
+                ? guesses.length
+                : "X";
             const toast = useToast();
             try {
                 navigator.clipboard
@@ -184,62 +156,59 @@ export default {
 ${str}
 ${window.location.href}`);
                 toast.success("Copied to clipboard", { timeout: 2500 });
-            } catch (error) {
+            }
+            catch (error) {
                 toast.error("Error copying to clipboard", { timeout: 2500 });
             }
         },
         exportStats() {
             const toast = useToast();
-                        try {
-
+            try {
                 navigator.clipboard
                     .writeText(JSON.stringify(this.stats));
                 toast.success("Copied to clipboard", { timeout: 2500 });
-            } catch (error) {
+            }
+            catch (error) {
                 toast.error("Error copying to clipboard", { timeout: 2500 });
             }
         },
         validateImport(imported) {
-            const checkKeys = (source,test) => {
+            const checkKeys = (source, test) => {
                 for (const k in source) {
                     if (typeof source[k] == "object") {
-                        if (typeof test[k] !== "object" || !checkKeys(source[k],test[k])) {
-                            return false
+                        if (typeof test[k] !== "object" || !checkKeys(source[k], test[k])) {
+                            return false;
                         }
                     }
                     if (typeof source[k] !== typeof test[k]) {
-                        return false
+                        return false;
                     }
                 }
-                return true
-
-            }
-            const expected = JSON.parse(JSON.stringify(this.stats))
-            console.log(expected)
-            return checkKeys(expected,imported) && checkKeys(imported,expected)
+                return true;
+            };
+            const expected = JSON.parse(JSON.stringify(this.stats));
+            console.log(expected);
+            return checkKeys(expected, imported) && checkKeys(imported, expected);
         },
         async importStats() {
             const toast = useToast();
-                                    try {
-
-                                            const imported = JSON.parse(prompt("Paste stats to import"))
-                                        
-
-                                        if (this.validateImport(imported)) {
-                                            this.stats = imported
-                                            setItem("stats",this.stats)
-                                            toast.success("Successfully imported stats", { timeout: 2500 });
-                                        } else {
-
-                                            toast.error("Error copying to clipboard", { timeout: 2500 });
-                                        }
-
-            } catch (error) {
-                console.error(error)
+            try {
+                const imported = JSON.parse(prompt("Paste stats to import"));
+                if (this.validateImport(imported)) {
+                    this.$store.commit("set_stats", imported);
+                    toast.success("Successfully imported stats", { timeout: 2500 });
+                }
+                else {
+                    toast.error("Error copying to clipboard", { timeout: 2500 });
+                }
+            }
+            catch (error) {
+                console.error(error);
                 toast.error("Error copying to clipboard", { timeout: 2500 });
             }
         }
     },
+    components: { ModalBase }
 };
 </script>
 <style>
@@ -261,41 +230,17 @@ ${window.location.href}`);
     display: flex;
     align-items: center;
 }
-.statistics-container-inner {
-    position: relative;
-    width: 90%;
-    max-width: 500px;
-    height: 80%;
-    max-height: 750px;
-    background-color: #121213;
-        overflow-y: auto;
 
-}
-.statistics-container {
-    position: fixed;
-    padding: 5vw;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.x-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 25px;
-    height: 25px;
-}
-.statistics-container tr td {
+.stats-table {
+    width: 100%;
+    tr td {
     font-size: 32px;
 }
-.statistics-container thead td {
+thead td {
     font-size: 14px;
 }
+}
+
 .share-btn {
     user-select: none;
     border-radius: 5px;

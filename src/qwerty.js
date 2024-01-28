@@ -1,5 +1,3 @@
-import { getCurrentScheme } from "./colorschemes";
-
 const letters = [
   "A",
   "B",
@@ -94,7 +92,7 @@ function HSVtoRGB(h, s, v) {
     b * 255
   )})`;
 }
-const getColorFromDistance = (distance) => {
+const getColorFromDistance = (distance, colorscheme) => {
   init()
   if (distance === null) {
     return null
@@ -105,7 +103,7 @@ const getColorFromDistance = (distance) => {
 
   let t = (distance-minDistance)/(maxDistance-minDistance)
 
-  const [close,far] = getCurrentScheme()
+  const [close,far] = colorscheme
   const lerp = (i)=>(far[i]+t*(close[i]-far[i]))
   const res = `hsl(${lerp(0)}deg,${lerp(1)}%, ${lerp(2)}%)`
   return res

@@ -1,15 +1,13 @@
-import {getItem, setItem} from './SaveDataManager'
-
-function saveToStats(numGuesses, win) {
-    let stats = getItem('stats')
+function saveToStats(numGuesses, win, store) {
+    let stats = store.state.stats
     if (!stats) {
         stats = {
-currentStreak: 0,
-gamesPlayed: 0,
-gamesWon: 0,
-guesses: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0},
-maxStreak: 0,
-winPercentage: 0
+            currentStreak: 0,
+            gamesPlayed: 0,
+            gamesWon: 0,
+            guesses: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0 },
+            maxStreak: 0,
+            winPercentage: 0
         }
     }
     if (win) {
@@ -23,21 +21,21 @@ winPercentage: 0
     stats.gamesPlayed += 1
     stats.maxStreak = Math.max(stats.currentStreak, stats.maxStreak)
     stats.winPercentage = Math.round(100 * (stats.gamesWon / stats.gamesPlayed))
-    setItem('stats',stats)
+    store.commit('set_stats', stats)
 }
-function endStreak() {
-        let stats = getItem('stats')
+function endStreak(store) {
+    let stats = store.state.stats
     if (!stats) {
         stats = {
-currentStreak: 0,
-gamesPlayed: 0,
-gamesWon: 0,
-guesses: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0},
-maxStreak: 0,
-winPercentage: 0
+            currentStreak: 0,
+            gamesPlayed: 0,
+            gamesWon: 0,
+            guesses: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0 },
+            maxStreak: 0,
+            winPercentage: 0
         }
     }
     stats.currentStreak = 0
-    setItem('stats',stats)
+    store.commit('set_stats', stats)
 }
-export {saveToStats, endStreak}
+export { saveToStats, endStreak }

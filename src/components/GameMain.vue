@@ -80,7 +80,6 @@
 import { getDistance, getColorFromDistance } from "../qwerty.js";
 import QwertleKeyboard from "./QwertleKeyboard";
 import { ACCEPTABLE, ANSWERS } from "../dictionary.js";
-import { getItem, setItem } from "../SaveDataManager";
 import { saveToStats, endStreak } from "../stats";
 import { useToast } from "vue-toastification";
 
@@ -88,7 +87,7 @@ export default {
     components: { QwertleKeyboard },
     watch: {
         answer(val) {
-            setItem("answer", val);
+            this.$store.commit('set_answer', val);
         },
         // gameState(val) {
         //     setItem("gameState", val);
@@ -96,9 +95,12 @@ export default {
         guesses: {
             deep: true,
             handler(val) {
-                setItem("guesses", val);
+                this.$store.commit('set_guesses',val)
             },
         },
+        gameState(val) {
+            this.$store.commit('set_game_state',val)
+        }
     },
     mounted() {
         // const answerArray = Object.keys(ANSWERS);
@@ -112,21 +114,21 @@ export default {
         });
         // this.gameState = getItem("gameState") || "IN_PROGRESS";
         // setItem("gameState", this.gameState);
-        const lastAnswer = getItem("answer");
+        const lastAnswer = this.$store.state.answer
         const answerArray = Object.keys(ANSWERS);
 
         const answerIndex = this.getDailyIndex();
         this.answer = answerArray[answerIndex].toUpperCase();
-        this.guesses = getItem("guesses");
+        this.guesses = this.$store.state.guesses;
 
         if (this.answer !== lastAnswer) {
             this.resetGame();
         }
 
-        const mostRecentFinishDay = getItem("mostRecentFinishDay");
+        const mostRecentFinishDay = this.$store.state.mostRecentFinishDay;
         const daysSinceMostRecent = this.getDailyIndex() - mostRecentFinishDay;
         if (daysSinceMostRecent > 1) {
-            endStreak();
+            endStreak(this.$store);
         }
     },
     data() {
@@ -146,7 +148,7 @@ export default {
     },
     computed: {
         colorRange() {
-            const currentscheme = this.$parent.colorscheme
+            const currentscheme = this.$store.getters.colorscheme
             return [`hsl(${currentscheme[0][0]}deg, ${currentscheme[0][1]}%, ${currentscheme[0][2]}%)`,
             `hsl(${currentscheme[1][0]}deg, ${currentscheme[1][1]}%, ${currentscheme[1][2]}%)`]
         },
@@ -181,7 +183,7 @@ export default {
         },
         colorsOfPreviousGuesses() {
             return this.guesses.map(g=>{
-                return g.map(l=>getColorFromDistance(l.distance,this.$parent.colorscheme))
+                return g.map(l=>getColorFromDistance(l.distance,this.$store.getters.colorscheme))
             })
         }
     },
@@ -192,10 +194,10 @@ export default {
             }
         },
         endGame() {
-            setItem("mostRecentFinishDay", this.getDailyIndex());
-            saveToStats(this.guesses.length, this.gameState === "WIN");
+            this.$store.commit('set_most_recent_finished_day', this.getDailyIndex());
+            saveToStats(this.guesses.length, this.gameState === "WIN", this.$store);
             setTimeout(() => {
-                this.$emit("statistics");
+                this.$store.commit('show_modal',"statistics");
             }, 1500);
         },
         keyPress(key) {
@@ -217,7 +219,7 @@ export default {
             }
         },
         getColorFromDistance(distance) {
-            return getColorFromDistance(distance);
+            return getColorFromDistance(distance,this.$store.getters.colorscheme);
         },
         resetLetters() {
             this.letter0 =

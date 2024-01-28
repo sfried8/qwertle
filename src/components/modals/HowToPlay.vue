@@ -1,6 +1,5 @@
 <template>
-    <div class="how-to-play-container">
-        <div class="how-to-play-container-inner">
+    <ModalBase>
             <h3>How To Play</h3>
             <p>Guess the <strong>QWERTLE</strong> in six tries.</p>
             <p>
@@ -30,55 +29,28 @@
             <h4>A new QWERTLE will be available each day!</h4>
                         <!-- Something wrong?&nbsp;<button @click="reset">Reset game</button> -->
             <!-- </p> -->
-            <div class="x-button" @click="$emit('close')">X</div>
-        </div>
-    </div>
+</ModalBase>
 </template>
 
 <script>
 import { getColorFromDistance, getDistance } from '@/qwerty';
+import ModalBase from './ModalBase.vue';
 
 export default {
-    methods: {
-        reset() {
-            this.$parent.$parent.$refs.gameMain.resetGame();
-            this.$emit("close");
-        },
-    },
     computed: {
         colorRange() {
-            //eslint-disable-next-line
-            const currentscheme = this.$parent.colorscheme
+            const currentscheme = this.$store.getters.colorscheme;
             const maxDistance = getDistance("Q", "P");
-            const minDistance = getDistance("Q", "W")
-            return [ getColorFromDistance(maxDistance), getColorFromDistance((maxDistance + minDistance)/2), getColorFromDistance(minDistance) ]
+            const minDistance = getDistance("Q", "W");
+            return [getColorFromDistance(maxDistance, currentscheme), getColorFromDistance((maxDistance + minDistance) / 2, currentscheme), getColorFromDistance(minDistance, currentscheme)];
         }
-    }
+    },
+    components: { ModalBase }
 };
 </script>
 
 <style>
-.how-to-play-container-inner {
-    position: relative;
-    width: 90%;
-    max-width: 500px;
-    height: 90%;
-    max-height: 750px;
-    background-color: #121213;
-    overflow-y: auto;
-}
-.how-to-play-container {
-    position: fixed;
-    padding: 5vw;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 .min-distance {
     background-color: v-bind('colorRange[2]');
 }
@@ -93,18 +65,5 @@ export default {
     text-shadow: none;
     background-color: white;
 }
-.guess-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-}
 
-.x-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 25px;
-    height: 25px;
-}
 </style>

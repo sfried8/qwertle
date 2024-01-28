@@ -1,16 +1,16 @@
 <template>
     <header class="header">
-        <div class="htp-icon" @click="$emit('how-to-play')">?</div>
+        <div class="htp-icon" @click="showModal('how-to-play')">?</div>
         <div><h2>QWERTLE</h2></div>
         <div style="display: flex;">
        
-       <div class="htp-icon" @click="$emit('donate')">$</div>
+       <div class="htp-icon" @click="showModal('donate')">$</div>
        <div style="width:10px"></div>
-       <div class="htp-icon" @click="$emit('accessibility')">⚙
+       <div class="htp-icon" @click="showModal('accessibility')">⚙
 
 </div>
        <div style="width:10px"></div>
-        <div @click="$emit('statistics')">
+        <div @click="showModal('statistics')">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24"
@@ -32,7 +32,11 @@
 
 
 export default {
-
+    methods: {
+        showModal(modalName) {
+            this.$store.commit('show_modal',modalName)
+        }
+    }
 };
 </script>
 
