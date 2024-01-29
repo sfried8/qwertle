@@ -225,6 +225,7 @@ export default {
             );
         },
         resetGame() {
+            window.umami.track('reset-game', { isDaily: this.isDaily })
             this.resetLetters();
             this.guesses = [];
             const answerArray = Object.keys(ANSWERS);
@@ -262,6 +263,7 @@ export default {
                 });
             }
             this.guesses.push(newGuess)
+            window.umami.track('submit-guess', { isDaily: this.isDaily, guess: this.currentGuess })
             this.resetLetters();
             this.isAnimating = true
             setTimeout(() => {

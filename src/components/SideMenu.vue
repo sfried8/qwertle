@@ -44,6 +44,7 @@ export default {
         },
         toggleDaily() {
             this.hide()
+            window.umami.track('switch-mode', { isDaily: this.isDaily })
             this.$router.push(this.isDaily ? 'practice' : 'daily')
         }
     },
