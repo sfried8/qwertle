@@ -1,96 +1,72 @@
 <template>
-<ModalBase>
-            <h3>Statistics</h3>
-            <table class="stats-table">
-                <thead>
-                    <td>Current<br />Streak</td>
-                    <td>Longest<br />Streak</td>
-                    <td>Games<br />Played</td>
-                    <td>Games<br />Won</td>
-                    <td>Win<br />Percent</td>
-                </thead>
-                <tr>
-                    <td>{{ stats.currentStreak }}</td>
-                    <td>{{ stats.maxStreak }}</td>
-                    <td>{{ stats.gamesPlayed }}</td>
-                    <td>{{ stats.gamesWon }}</td>
-                    <td>{{ stats.winPercentage }}</td>
-                </tr>
-            </table>
-                        <div v-if="shareButtonEnabled">
-                <div class="share-btn" @click="share">SHARE</div>
+    <ModalBase>
+        <h3>Statistics</h3>
+        <table class="stats-table">
+            <thead>
+                <td>Current<br />Streak</td>
+                <td>Longest<br />Streak</td>
+                <td>Games<br />Played</td>
+                <td>Games<br />Won</td>
+                <td>Win<br />Percent</td>
+            </thead>
+            <tr>
+                <td>{{ stats.currentStreak }}</td>
+                <td>{{ stats.maxStreak }}</td>
+                <td>{{ stats.gamesPlayed }}</td>
+                <td>{{ stats.gamesWon }}</td>
+                <td>{{ stats.winPercentage }}</td>
+            </tr>
+        </table>
+        <div v-if="shareButtonEnabled">
+            <div class="share-btn" @click="share">SHARE</div>
+        </div>
+        <div class="guess-distribution">
+            <h4>GUESS DISTRIBUTION</h4>
+            <div class="guess-distribution-line">
+                <div>1:</div>
+                <div class="guess-bar" :class="{
+                    'guess-bar-highlight': 1 === highlightedGuess,
+                }" :style="{ width: guessPercents[1] + '%' }" />
+                <div>{{ stats.guesses[1] }}</div>
             </div>
-            <div class="guess-distribution">
-                <h4>GUESS DISTRIBUTION</h4>
-                <div class="guess-distribution-line">
-                    <div>1:</div>
-                    <div
-                        class="guess-bar"
-                        :class="{
-                            'guess-bar-highlight': 1 === highlightedGuess,
-                        }"
-                        :style="{ width: guessPercents[1] + '%' }"
-                    />
-                    <div>{{ stats.guesses[1] }}</div>
-                </div>
-                <div class="guess-distribution-line">
-                    <div>2:</div>
-                    <div
-                        class="guess-bar"
-                        :class="{
-                            'guess-bar-highlight': 2 === highlightedGuess,
-                        }"
-                        :style="{ width: guessPercents[2] + '%' }"
-                    />
-                    <div>{{ stats.guesses[2] }}</div>
-                </div>
-                <div class="guess-distribution-line">
-                    <div>3:</div>
-                    <div
-                        class="guess-bar"
-                        :class="{
-                            'guess-bar-highlight': 3 === highlightedGuess,
-                        }"
-                        :style="{ width: guessPercents[3] + '%' }"
-                    />
-                    <div>{{ stats.guesses[3] }}</div>
-                </div>
-                <div class="guess-distribution-line">
-                    <div>4:</div>
-                    <div
-                        class="guess-bar"
-                        :class="{
-                            'guess-bar-highlight': 4 === highlightedGuess,
-                        }"
-                        :style="{ width: guessPercents[4] + '%' }"
-                    />
-                    <div>{{ stats.guesses[4] }}</div>
-                </div>
-                <div class="guess-distribution-line">
-                    <div>5:</div>
-                    <div
-                        class="guess-bar"
-                        :class="{
-                            'guess-bar-highlight': 5 === highlightedGuess,
-                        }"
-                        :style="{ width: guessPercents[5] + '%' }"
-                    />
-                    <div>{{ stats.guesses[5] }}</div>
-                </div>
-                <div class="guess-distribution-line">
-                    <div>6:</div>
-                    <div
-                        class="guess-bar"
-                        :class="{
-                            'guess-bar-highlight': 6 === highlightedGuess,
-                        }"
-                        :style="{ width: guessPercents[6] + '%' }"
-                    />
-                    <div>{{ stats.guesses[6] }}</div>
-                </div>
+            <div class="guess-distribution-line">
+                <div>2:</div>
+                <div class="guess-bar" :class="{
+                    'guess-bar-highlight': 2 === highlightedGuess,
+                }" :style="{ width: guessPercents[2] + '%' }" />
+                <div>{{ stats.guesses[2] }}</div>
             </div>
+            <div class="guess-distribution-line">
+                <div>3:</div>
+                <div class="guess-bar" :class="{
+                    'guess-bar-highlight': 3 === highlightedGuess,
+                }" :style="{ width: guessPercents[3] + '%' }" />
+                <div>{{ stats.guesses[3] }}</div>
+            </div>
+            <div class="guess-distribution-line">
+                <div>4:</div>
+                <div class="guess-bar" :class="{
+                    'guess-bar-highlight': 4 === highlightedGuess,
+                }" :style="{ width: guessPercents[4] + '%' }" />
+                <div>{{ stats.guesses[4] }}</div>
+            </div>
+            <div class="guess-distribution-line">
+                <div>5:</div>
+                <div class="guess-bar" :class="{
+                    'guess-bar-highlight': 5 === highlightedGuess,
+                }" :style="{ width: guessPercents[5] + '%' }" />
+                <div>{{ stats.guesses[5] }}</div>
+            </div>
+            <div class="guess-distribution-line">
+                <div>6:</div>
+                <div class="guess-bar" :class="{
+                    'guess-bar-highlight': 6 === highlightedGuess,
+                }" :style="{ width: guessPercents[6] + '%' }" />
+                <div>{{ stats.guesses[6] }}</div>
+            </div>
+        </div>
 
-</ModalBase>
+    </ModalBase>
 </template>
 
 <script>
@@ -130,18 +106,18 @@ export default {
             const maxDistance = getDistance("Q", "P");
             const str = guesses
                 .map((g) => {
-                return g
-                    .map((l) => {
-                    if (l.distance === 0) {
-                        return "🟩";
-                    }
-                    if (l.distance / maxDistance < 0.25) {
-                        return "🟨";
-                    }
-                    return "⬛";
+                    return g
+                        .map((l) => {
+                            if (l.distance === 0) {
+                                return "🟩";
+                            }
+                            if (l.distance / maxDistance < 0.25) {
+                                return "🟨";
+                            }
+                            return "⬛";
+                        })
+                        .join("");
                 })
-                    .join("");
-            })
                 .join("\n");
             const today = new Date();
             const qwertleEpoch = new Date("04/13/2022");
@@ -154,7 +130,7 @@ export default {
                 navigator.clipboard
                     .writeText(`QWERTLE #${todaysNumber} ${todaysGuesses}/6
 ${str}
-${window.location.href}`);
+https://qwertle.friedman.in`);
                 toast.success("Copied to clipboard", { timeout: 2500 });
             }
             catch (error) {
@@ -218,14 +194,17 @@ ${window.location.href}`);
     display: inline-block;
     margin: 8px;
 }
+
 .guess-bar-highlight {
     background-color: forestgreen;
 }
+
 .guess-distribution {
     padding: 5px;
     width: 75%;
     margin: auto;
 }
+
 .guess-distribution-line {
     display: flex;
     align-items: center;
@@ -233,12 +212,14 @@ ${window.location.href}`);
 
 .stats-table {
     width: 100%;
+
     tr td {
-    font-size: 32px;
-}
-thead td {
-    font-size: 14px;
-}
+        font-size: 32px;
+    }
+
+    thead td {
+        font-size: 14px;
+    }
 }
 
 .share-btn {

@@ -2,7 +2,7 @@ const CHANGES = [
     {
         version: "1.2.1",
         features: [],
-        bugfixes: ["Fixed freeze when blocking trackers"]
+        bugfixes: ["Fixed freeze when blocking trackers", "Fixed share URL"]
     },
     {
         version: "1.2.0",
