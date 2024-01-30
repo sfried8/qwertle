@@ -12,6 +12,7 @@
 export default {
     methods: {
         hide() {
+            this.$emit('hide-modal')
             this.$store.commit('hide_modal')
         }
     }

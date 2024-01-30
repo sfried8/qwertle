@@ -16,7 +16,10 @@
 
 <script>
 import PageHeader from "@/components/PageHeader.vue";
+import { getChangesSince } from "./changelog";
 import SideMenu from "./components/SideMenu.vue";
+
+
 
 export default {
     name: "App",
@@ -29,10 +32,13 @@ export default {
             if (!this.$store.state.seenHowToPlay) {
                 this.$store.commit('show_modal', 'how-to-play')
                 this.$store.commit('set_seen_how_to_play')
-            } else if (this.APP_VERSION != this.$store.state.lastSeenVersion) {
-                this.$store.commit('show_modal', 'changes')
-                this.$store.commit('set_last_seen_version', this.APP_VERSION)
+            } else {
+                const newChanges = getChangesSince(this.$store.state.lastSeenVersion)
+                if (newChanges.features.length) {
+                    this.$store.commit('show_modal', 'newchanges')
+                }
             }
+            this.$store.commit('set_last_seen_version', this.APP_VERSION)
         }, 500);
     },
     computed: {

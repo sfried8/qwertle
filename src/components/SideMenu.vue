@@ -28,7 +28,7 @@
 
         </div>
         <div>Made by <br />Sam Friedman</div>
-        <div>v{{ APP_VERSION }}</div>
+        <div style="text-decoration-line: underline;" @click="showModal('changes')">v{{ APP_VERSION }}</div>
         <div class="x-button" @click="hide">X</div>
     </div>
 </template>
@@ -44,7 +44,9 @@ export default {
         },
         toggleDaily() {
             this.hide()
-            window.umami.track('switch-mode', { isDaily: this.isDaily })
+            if (window.umami) {
+                window.umami.track('switch-mode-to-' + (this.isDaily ? 'practice' : 'daily'))
+            }
             this.$router.push(this.isDaily ? 'practice' : 'daily')
         }
     },

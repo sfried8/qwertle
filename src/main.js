@@ -5,7 +5,7 @@ import "vue-toastification/dist/index.css";
 import router from './router'
 import store from './store'
 const app = createApp(App).use(store).use(router)
-app.config.globalProperties.APP_VERSION = "1.2"
+app.config.globalProperties.APP_VERSION = "1.2.1"
 store.subscribe((mutation, state) => {
     const savedState = JSON.parse(JSON.stringify(state))
     delete savedState["currentlyShownModalName"]

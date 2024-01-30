@@ -5,6 +5,7 @@ import DonateModal from '@/components/modals/DonateModal.vue';
 import HowToPlay from '@/components/modals/HowToPlay.vue';
 import StatisticsModal from '@/components/modals/StatisticsModal.vue';
 import ChangesModal from '@/components/modals/ChangesModal.vue';
+import NewChangesModal from '@/components/modals/NewChangesModal.vue';
 import SideMenu from '@/components/SideMenu.vue';
 
 const modals = {
@@ -13,7 +14,8 @@ const modals = {
   'donate': DonateModal,
   'accessibility': AccessibilityModal,
   'sidemenu': SideMenu,
-  'changes': ChangesModal
+  'changes': ChangesModal,
+  'newchanges': NewChangesModal
 }
 export default createStore({
   state() {
@@ -25,6 +27,7 @@ export default createStore({
       mostRecentFinishedDay: new Date('01/01/1970'),
       gameState: "IN_PROGRESS",
       seenHowToPlay: false,
+      penultimateSeenVersion: "0.0",
       lastSeenVersion: "0.0",
       stats: {
         guesses: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, fail: 0 },
@@ -88,7 +91,10 @@ export default createStore({
       state.seenHowToPlay = true
     },
     set_last_seen_version(state, version) {
-      state.lastSeenVersion = version
+      if (state.lastSeenVersion != version) {
+        state.penultimateSeenVersion = state.lastSeenVersion
+        state.lastSeenVersion = version
+      }
     }
   },
   actions: {
