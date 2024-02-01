@@ -1,5 +1,10 @@
 const CHANGES = [
     {
+        version: "1.2.2",
+        features: [],
+        bugfixes: ["Allow deleting first letter"]
+    },
+    {
         version: "1.2.1",
         features: [],
         bugfixes: ["Fixed freeze when blocking trackers", "Fixed share URL"]

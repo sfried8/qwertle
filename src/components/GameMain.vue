@@ -191,7 +191,7 @@ export default {
             if (this.isAnimating) {
                 return
             }
-            if (key === "Backspace" && this.currentIndex > 0) {
+            if (key === "Backspace" && (this.currentIndex > 0 || this["letter" + this.currentIndex])) {
                 if (!this["letter" + this.currentIndex]) {
                     this.currentIndex -= 1;
                 }
